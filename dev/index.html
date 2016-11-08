@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Map Project</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- filter string; sent to maps -->
+  <div id="filter-div">
+    <label for="filter">Filter By: </label><input type="text" id="filter-input" value="">
+    <button id="submit-btn">Submit</button>
+  </div>
+
+  <!-- list of items related to filter -->
+  <div id="list-items">
+    List Items
+  </div>
+
+  <!-- The map -->
+  <div id="map"></div>
+
+  <!-- Related informations -->
+  <div id="related-info">
+    Related Information
+    <ul id="related-info-list">
+
+    </ul>
+
+  </div>
+
+  <!-- scripts -->
+  <script async defer
+    src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&callback=initMap"
+  >
+  </script>
+  <script src="js/libs/jquery.min.js"></script>
+  <script src="js/script.js"></script>
+</body>
