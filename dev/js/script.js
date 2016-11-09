@@ -5,14 +5,14 @@ function initMap() {
     zoom: 13
   });
 
-  // test: marker
-  // var tribeca = {lat: 40.719526, lng: -73.9980244};
-  // var marker = new google.maps.Marker({
-  //   position: tribeca,
-  //   map: map,
-  //   title: 'First Marker!'
-  // });
-  //
+  //test: marker
+  var tribeca = {lat: 40.719526, lng: -73.9980244};
+  var marker = new google.maps.Marker({
+    position: tribeca,
+    map: map,
+    title: 'First Marker!'
+  });
+
   // var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 }
 
