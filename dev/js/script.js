@@ -8,5 +8,10 @@
  */
 
 window.onload = function () {
+
+  // ko.applyBindings(vm);
+  // vm.mapLocation("Giraffe");
+  vm.initialize();
+
   vm.initMap();
 }

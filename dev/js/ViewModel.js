@@ -8,12 +8,14 @@
 var vm = (function () {
   var self = this;
 
+  self.address = ko.observable("World Map");
+
   // container for public methods
   var publicMethods = {};
 
   // public methods
   publicMethods.initialize = function () {
-    self.initMap();
+    return md.initMap();
   }
   publicMethods.initMap = function () {
     return md.initMap();
@@ -27,3 +29,5 @@ var vm = (function () {
 
   return publicMethods; // return object containing public methods
 }) ();
+
+ko.applyBindings(vm);
