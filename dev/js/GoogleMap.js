@@ -34,7 +34,7 @@
      map = new google.maps.Map(document.getElementById('map-canvas'), {
        center: new google.maps.LatLng(0,0),
        //center: {lat: 0, lng: 0},
-       zoom: 1,
+       zoom: 2,
        //minZoom: 1,
        styles: setMapStyles(),
        mapTypeId: 'roadmap',
@@ -51,7 +51,9 @@
      getPlaces();
    }
 
+   publicMethods.updateAddress = function(address) {
 
+   }
 
    /*************************** private methods ***************************/
 
@@ -61,7 +63,6 @@
     * @param  {type} marker description
     * @return {type}        description
     */
-
    function populateInfowindow(marker) {
      // Start the marker bouncing.
      toggleBounce(marker);
@@ -306,16 +307,17 @@
             if (status == google.maps.GeocoderStatus.OK) {
               loc = results[0].geometry.location;
               locationLatlon = results[0].geometry.location;
+console.log("lat", loc.lat());
+console.log("lng", loc.lng());
               map.setCenter(results[0].geometry.location);
-             //  map.setZoom(15);
+              map.setZoom(15);
             } else {
               alert('Geocode was not successful for the following reason: ' + status);
             }
          });
      // }
-
      // Get POI
-     getPlaces();
+     //getPlaces();
 
     // return {status: geoLocStatus, location: loc};
    } //  addressToLatlng

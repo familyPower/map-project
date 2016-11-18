@@ -8,25 +8,38 @@
 var vm = (function () {
   var self = this;
 
-  self.address = ko.observable("World Map");
+  /****************************** Knockout Bindings **************************/
+  self.address = ko.observable("Empire State Building");
+  // self.address = ko.observable("World Map");
+
+  // Submit button clicked.
+  this.updateAddress = function() {
+    // Get and save the new address to center map on.
+    var newAddress = self.address();
+
+    // update the map with the new address.
+    gm.setAddress(newAddress);
+
+  };
 
   // container for public methods
   var publicMethods = {};
 
-  // public methods
+  /****************************** Public Methods *****************************/
   publicMethods.initialize = function () {
-    return md.initMap();
+    return gm.initMap();
   }
+
   publicMethods.initMap = function () {
-    return md.initMap();
+    return gm.initMap();
   }
 
-
-  // private methods
+  /****************************** Private Methods ****************************/
   var initialize = function () {
 
   }
 
+  // Expose public methods.
   return publicMethods; // return object containing public methods
 }) ();
 
