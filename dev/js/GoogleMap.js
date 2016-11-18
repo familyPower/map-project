@@ -201,7 +201,6 @@
        radius: 16000,
        type: ['park', 'library', 'zoo']
      }, processResults);
-
    }
 
    function processResults(results, status, pagination) {
@@ -229,7 +228,7 @@
 
      // The following group uses the location array to create an array of markers
      // on initialize.
-   console.log("places.count:", places.length);
+console.log("places.count:", places.length);
      for (var i = 0, place; place = places[i]; i++) {
    //    console.log("i:", i);
        var image = {
@@ -294,6 +293,7 @@
 
      var loc;
      var geoLocStatus;
+     var geoResults;
      var geocoder = new google.maps.Geocoder();
 
      // if (address == '') {
@@ -304,6 +304,7 @@
          { address: address
          }, function(results, status) {
              geoLocStatus = status;
+             geoResults = results;
             if (status == google.maps.GeocoderStatus.OK) {
               loc = results[0].geometry.location;
               locationLatlon = results[0].geometry.location;
@@ -317,7 +318,7 @@ console.log("lng", loc.lng());
          });
      // }
      // Get POI
-     //getPlaces();
+     getPlaces();
 
     // return {status: geoLocStatus, location: loc};
    } //  addressToLatlng
