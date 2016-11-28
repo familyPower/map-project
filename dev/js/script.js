@@ -1,4 +1,3 @@
-
 /**
  * Filename: script.js
  * Purpose: Serves as the View componenet to MVVM design patter.
@@ -7,11 +6,24 @@
  * Notes:
  */
 
-window.onload = function () {
+window.onload = function() {
 
-  // ko.applyBindings(vm);
-  // vm.mapLocation("Giraffe");
-  vm.initialize();
+    // ko.applyBindings(vm);
+    // vm.mapLocation("Giraffe");
+    vm.initialize();
 
-  vm.initMap();
+    vm.initMap();
+
+}
+
+var placeClicked = function(ele) {
+    precondition(ele);
+
+    //assert(true === ele.hasAttribute('id'), "placeClicked");
+    var eId = ele.id;
+
+    //assert(true === ele.hasAttribute('data-Item-Marker'), "placeClicked");
+    var mrkr_name = ele.getAttribute('data-Item-Marker');
+
+    vm.placeClicked(eId);
 }

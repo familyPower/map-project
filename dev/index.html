@@ -38,7 +38,11 @@
     <div class = "row">   <!-- row 2 -->
       <div class="col-lg-4 col-md-4 col-xs-12" id="list-items">    <!-- row 2, col 1 -->
         List Items
-        <ul id="marker-list"></ul>
+        <ul data-bind="foreach: places" id="marker-list">
+          <li data-bind="attr: {id: idString}" class="marker-list-items" onclick="window.placeClicked(this)">
+          <span data-bind="text: placeName"> </span>
+        </li>
+        </ul>
       </div>    <!-- row 2, col 1 -->
 
       <!-- The map -->
@@ -68,6 +72,7 @@
   <script src="js/libs/knockout.min.js"></script>
   <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
+  <script src="js/globals.js"></script>
   <script src="js/GoogleMap.js"></script>
   <script src="js/Model.js"></script>
   <script src="js/ViewModel.js"></script>
