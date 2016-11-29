@@ -12,7 +12,7 @@ window.onload = function() {
     // vm.mapLocation("Giraffe");
     vm.initialize();
 
-    vm.initMap();
+    // vm.initMap();
 
 }
 

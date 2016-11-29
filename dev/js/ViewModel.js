@@ -15,6 +15,9 @@ var vm = (function() {
     // The places found by google maps for address.
     self.places = ko.observableArray();
 
+    // holds articles from the New York Times
+    self._articlesNYT = ko.observableArray();
+
     // Submit button clicked.
     self.updateAddress = function() {
         // Get and save the new address to center map on.
@@ -23,7 +26,7 @@ var vm = (function() {
         // set the new address and update the map.
         gm.updateMap(newAddress, updateUIMarkers);
 
-        g_callback = self.updateUIMarkers;
+        //g_callback = self.updateUIMarkers;
         // // update the map with the new address.
         // gm.updateMap(newAddress);
 
@@ -117,10 +120,15 @@ console.log("places-", places());
     var publicMethods = {};
 
     publicMethods.initialize = function() {
-        return gm.initMap();
+
+        return initMap();
     }
 
-    publicMethods.initMap = function() {
+    function initMap() {
+
+      // called after map address updated.
+      g_callback_AddressFound = addressFound;
+
         return gm.initMap();
     }
 
@@ -139,10 +147,15 @@ console.log("places-", places());
         // var k = data.Key;
 
         gm.placeSelected(mrkr_id);
+//        nytApi.getNYTArticles();
 
         //"var mrkr = $(this).data('item-marker'); gm.populateInfowindow(mrkr);"
     }
 
+    function addressFound(formattedAddress) {
+      var articles = nyt.getNYTArticles(formattedAddress);
+      var wikiArticles = wiki.getWikipediaArticles(formattedAddress);
+    }
     /**************************** End Public Methods **************************/
 
     // Expose public methods.

@@ -5,10 +5,13 @@
  * External Dependencies: maps.google.com
  * Notes:      //https://snazzymaps.com
  */
-var g_callback = null;
+
+g_callback_AddressFound = null;
+
 var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
+
 
     // TODO: add "_" to each private variable
     // Public members - getters and setters available
@@ -28,7 +31,8 @@ var gm = (function() {
 
 
     // container for public methods
-    var publicMethods = {};
+    var publicMethods = {
+    };
 
     /*************************** public methods ***************************/
 
@@ -332,36 +336,11 @@ console.log("markers:", _markers);
                 Marker: marker
             });
 
-            // TODO: move to view
-            //$('.related-info-list').innerHTML.append('<li>' + marker.title + '</li>');
-
-            // // TODO: remove ui code
-            // // Retrieve the <ul> element that will hold the list of markers
-            // var $ulElement = $('#marker-list');
-            // var ulChildren = $ulElement.children;
-            //
-            // // Add the new Marker information
-            // $ulElement.append('<li>' + place.name + '</li>');
-            // var $lastChild = $ulElement.children().last();
-            //
-            // $lastChild.attr('id', "item-" + i);
-            // $lastChild.attr('class', "marker-list-item");
-            // $lastChild.data("item-marker", marker);
-            //
-            // // Add click event to trigger actions like marker selected.
-            // $lastChild.click(function() {
-            //     var marker = $(this).data("item-marker");
-            //     populateInfowindow(marker);
-            // });
-            //
-            // var u = $('#marker-list:last-child').data("item-marker");
-            // //console.log(u.title);
-            // // var w = a.title
             bounds.extend(place.geometry.location);
         }
         map.fitBounds(bounds);
 
-        g_callback();
+        //g_callback();
     }
 
     /**
@@ -402,11 +381,15 @@ console.log("markers:", _markers);
             if (status == google.maps.GeocoderStatus.OK) {
                 loc = results[0].geometry.location;
                 self.locationLatlon = results[0].geometry.location;
-                console.log("lat", loc.lat());
-                console.log("lng", loc.lng());
+console.log("lat", loc.lat());
+console.log("lng", loc.lng());
                 map.setCenter(results[0].geometry.location);
                 map.setZoom(15);
                 getPlaces();
+
+console.log("results: ", results[0]);
+console.log("results[0].formatted_address: ", results[0].formatted_address);
+                g_callback_AddressFound(results[0].formatted_address);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
             }
