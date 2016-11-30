@@ -169,12 +169,20 @@ console.log("places-", places());
       wiki.getWikipediaArticles(formattedAddress, wikipediaArticlesFound);
     }
 
+    /**
+     * nytArticlesFound - description
+     *
+     * @param  {type} nytD The results from calling the NYT web service.
+     * @return {type}      None
+     * @comment
+     * @TODO Modify code so that aged articles do not appear.
+     */
     function nytArticlesFound(nytD) {
       self.nytData = nytD;
       self.nytArticles.removeAll();
       for( var i = 0, item; item = nytD.articles.docs[i], i < nytD.articles.docs.length; i++) {
         self.nytArticles.push({title: item.headline.main.split(";")[0],
-          url: item.web_url});
+          web_url: item.web_url});
       }
 console.log("self.newsArticles.docs: ", self.nytArticles());
     }
@@ -185,8 +193,8 @@ console.log("self.newsArticles.docs: ", self.nytArticles());
 
       //Load the observablearray with relevant data.
       for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
-        self.wikipediaArticles.push({title: x,
-        url: item.web_url});
+        self.wikipediaArticles.push({title: wikipediaD.articles[1][i],
+        web_url: wikipediaD.articles[3][i]});
       }
 
 console.log("self.wikiArticles.articles[3]: ", self.wikipediaArticles());
