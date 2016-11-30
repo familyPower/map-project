@@ -15,6 +15,12 @@ var vm = (function() {
     // The places found by google maps for address.
     self.places = ko.observableArray();
 
+    // Container for news articles
+    self.newsArticles = ko.observableArray();
+
+    // Container for Wikipedia articles
+    self.wikiArticles = ko.observableArray();
+
     // holds articles from the New York Times
     self._articlesNYT = ko.observableArray();
 
@@ -151,12 +157,26 @@ console.log("places-", places());
 
         //"var mrkr = $(this).data('item-marker'); gm.populateInfowindow(mrkr);"
     }
+    /**************************** End Public Methods **************************/
+
+    /**************************** Callbacks **************************/
 
     function addressFound(formattedAddress) {
-      var articles = nyt.getNYTArticles(formattedAddress);
-      var wikiArticles = wiki.getWikipediaArticles(formattedAddress);
+      nyt.getNYTArticles(formattedAddress, nytArticlesFound);
+      wiki.getWikipediaArticles(formattedAddress, wikipediaArticlesFound);
     }
-    /**************************** End Public Methods **************************/
+
+    function nytArticlesFound(data) {
+      self.newsArticles = data;
+console.log("self.newsArticles: ", self.newsArticles);
+    }
+
+    function wikipediaArticlesFound(data) {
+      self.wikiArticles = data;
+console.log("self.wikiArticles: ", self.wikiArticles);
+
+    }
+    /**************************** End Callbacks **************************/
 
     // Expose public methods.
     return publicMethods; // return object containing public methods

@@ -25,7 +25,7 @@ var nyt = (function() {
              * @param  {type} addressStreet description
              * @return {type}               description
              */
-            publicMethods.getNYTArticles = function(addressStreet) {
+            publicMethods.getNYTArticles = function(addressStreet, callback) {
               //  var $nytHeaderElem = $('#nytimes-header');
               //  var $nytElem = $('#nytimes-articles');
                var nytimesUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' +
@@ -41,7 +41,8 @@ var nyt = (function() {
                  // console.log(data);
                  // $nytHeaderElem.text("New York Times Articles About " + addressStreet);
                        // console.log('here2');
-                 _articles = data.response.docs;
+                 _articles = {status: "ok", source: "New York Times", articles: data.response};
+                 callback(_articles);
                 //  for (var i = 0; i < articles.length; i++) {
                 //    var article = articles[i];
                 //    var strArticle = '<li class="article">'+'<a href="'+article.web_url+'">"'+article.headline.main+'</a>'+'<p>'+article.snippet+'</p>'+'</li>';
@@ -49,10 +50,14 @@ var nyt = (function() {
                 //    $nytElem.append(strArticle);
                 //  }
                }).fail(function() {
-                 _articles = {status:fail};
+                 _articles = {status:fail, source: "New York Times", articles: undefined};
+                 callback(_articles);
                  // $nytHeaderElem.text("New York Times Articles Could Not Be Loaded for " + addressStreet);
                })
                // console.log('here');
+
+
+
              }
 
              return publicMethods;

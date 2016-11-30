@@ -22,7 +22,7 @@
               * @param  {type} addressCity   description
               * @return {type}               description
               */
-            publicMethods.getWikipediaArticles = function(addressStreet) {
+            publicMethods.getWikipediaArticles = function(addressStreet, callback) {
                // clear out old data before new request
                var $wikiElem = $('#wikipedia-links');
                $wikiElem.text("");
@@ -33,7 +33,7 @@
                  $wikiElem.text("Failed to get Wikipedia resources.");
                }, 8000);
 
-               _articles = {status: "fail", articles: null};
+               _articles = {status: "fail", source: "wikipedia", articles: undefined};
 
                $.ajax(wikiUrl, {
                  // url: wikiUrl,
@@ -42,7 +42,8 @@
                  success: function( response ) {
                    var articleList = response[1];
 
-                   _articles = {status: "ok", articles: response};
+                   _articles = {status: "ok", source: "Wikipedia", articles: response};
+                   callback(_articles);
                   // _articles = response;
                   //  for (var i = 0; i < articleList.length; i++) {
                   //    articleStr = articleList[i];
@@ -51,11 +52,13 @@
                   //      articleStr + '</a></li>');
                   //  };
 
-                   clearTimeout(wikiRequestTimeout);
+                  clearTimeout(wikiRequestTimeout);
                  }
-               });
+               }).fail(function() {
+                 _articles = {status:fail, source: "Wikipedia", articles: undefined};
+                 callback(_articles);
+             });
 
-             }
-
-              return publicMethods;
+            }
+            return publicMethods;
          })();
