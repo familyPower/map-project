@@ -56,10 +56,15 @@
 
       <!-- Related informations -->
       <div class="row">   <!-- row 3 -->
-        <div class="col-xs-6"  id="news-articles">  <!-- row 3, col 1>= -->
-          Related Information
-          <ul id="news-article-list">
+        <div class="col-xs-6"  id="nyt-articles">  <!-- row 3, col 1>= -->
+          New York Times Articles
+          <ul data-bind="foreach: nytArticles" id="nyt-article-list">
+            <li>
+              <span data-bind="text: title"> </span>
+            <!-- <a data-bind="attr: { href: web_url" target="_new">xxx</a>
+                <span data-bind="text: headline.main"> </span> -->
 
+            </li>
           </ul>
 
         </div>

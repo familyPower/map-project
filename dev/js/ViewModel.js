@@ -16,10 +16,13 @@ var vm = (function() {
     self.places = ko.observableArray();
 
     // Container for news articles
-    self.newsArticles = ko.observableArray();
+    self.nytArticles = ko.observableArray();
 
     // Container for Wikipedia articles
-    self.wikiArticles = ko.observableArray();
+    self.wikipediaArticles = ko.observableArray();
+
+    self.wikiData = undefined;
+    self.nytData = undefined;
 
     // holds articles from the New York Times
     self._articlesNYT = ko.observableArray();
@@ -166,14 +169,27 @@ console.log("places-", places());
       wiki.getWikipediaArticles(formattedAddress, wikipediaArticlesFound);
     }
 
-    function nytArticlesFound(data) {
-      self.newsArticles = data;
-console.log("self.newsArticles: ", self.newsArticles);
+    function nytArticlesFound(nytD) {
+      self.nytData = nytD;
+      self.nytArticles.removeAll();
+      for( var i = 0, item; item = nytD.articles.docs[i], i < nytD.articles.docs.length; i++) {
+        self.nytArticles.push({title: item.headline.main.split(";")[0],
+          url: item.web_url});
+      }
+console.log("self.newsArticles.docs: ", self.nytArticles());
     }
 
-    function wikipediaArticlesFound(data) {
-      self.wikiArticles = data;
-console.log("self.wikiArticles: ", self.wikiArticles);
+    function wikipediaArticlesFound(wikipediaD) {
+      self.wikiData = wikipediaD;
+      self.wikipediaArticles.removeAll();
+
+      //Load the observablearray with relevant data.
+      for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
+        self.wikipediaArticles.push({title: x,
+        url: item.web_url});
+      }
+
+console.log("self.wikiArticles.articles[3]: ", self.wikipediaArticles());
 
     }
     /**************************** End Callbacks **************************/
