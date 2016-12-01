@@ -6,8 +6,8 @@
  * Notes:      //https://snazzymaps.com
  */
 
-g_callback_AddressFound = null;
-
+g_callback_AddressFound = undefined;
+g_callback_AddressProcessed = undefined;
 var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
@@ -117,8 +117,6 @@ console.log("markers:", _markers);
     publicMethods.updateMap = function(address) {
         var addr = publicMethods.setAddress(address);
         addressToLatlng(address);
-        getPlaces();
-
     }
 
     /*************************** private methods ***************************/
@@ -282,6 +280,8 @@ console.log("markers:", _markers);
 
             createMarkers(results);
 
+            g_callback_AddressProcessed();
+
             // if (pagination.hasNextPage) {
             //   var moreButton = document.getElementById('more');
             //
@@ -295,7 +295,7 @@ console.log("markers:", _markers);
         }
     }
 
-    function createMarkers(places) {
+    function createMarkers() {
         clearMarkers();
 
         var bounds = new google.maps.LatLngBounds();
@@ -386,10 +386,9 @@ console.log("lng", loc.lng());
                 map.setCenter(results[0].geometry.location);
                 map.setZoom(15);
                 getPlaces();
-
+                g_callback_AddressFound(results[0].formatted_address);
 console.log("results: ", results[0]);
 console.log("results[0].formatted_address: ", results[0].formatted_address);
-                g_callback_AddressFound(results[0].formatted_address);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
             }
@@ -408,7 +407,7 @@ console.log("results[0].formatted_address: ", results[0].formatted_address);
      * @param  {type} d description
      * @return {type}   description
      */
-    publicMethods.placeSelected = function(key) {
+    publicMethods.placeSelected = function(key, callback) {
         //var marker = d.getAttribute("data-id");
 
         var ndx = findInArray(_markers, key);

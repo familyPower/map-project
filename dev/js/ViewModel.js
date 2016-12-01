@@ -47,7 +47,7 @@ var vm = (function() {
     };
 
     self.updateUIMarkers = function() {
-      places.removeAll();
+      self.places.removeAll();
 
         var dataArray = gm.getMarkersData();
 
@@ -88,7 +88,7 @@ console.log("count-before:", self.places().length);
 console.log("place:", data.PlaceName);
             var ulElement;
 
-            self.places.push({
+            self.updateUIMarkers.push({
                 placeName: data.PlaceName,
                 idString: data.Key,
             });
@@ -135,8 +135,10 @@ console.log("places-", places());
 
     function initMap() {
 
-      // called after map address updated.
+      // Set callbacks. This is necessary because calls to google maps appear
+      // to be asynchronous.
       g_callback_AddressFound = addressFound;
+      g_callback_AddressProcessed = addressProcessed;
 
         return gm.initMap();
     }
@@ -165,8 +167,29 @@ console.log("places-", places());
     /**************************** Callbacks **************************/
 
     function addressFound(formattedAddress) {
-      nyt.getNYTArticles(formattedAddress, nytArticlesFound);
-      wiki.getWikipediaArticles(formattedAddress, wikipediaArticlesFound);
+      // Display the address found.
+      self.address(formattedAddress);
+
+    }
+
+    function addressProcessed() {
+      // Get the places represented by the markers.
+      var markers = gm.getMarkersData();
+
+      // Remove existing data from the observableArray of markers.
+      self.places.removeAll();
+
+      assert(0 == self.places.length);
+
+      // Fill the observable array with new data.
+      for( var i = 0, marker; marker = markers[i], i < markers.length; i++) {
+        self.places.push(marker);
+      }
+
+      // Retrieve information for the address.
+      nyt.getNYTArticles(self.address(), nytArticlesFound);
+      wiki.getWikipediaArticles(self.address(), wikipediaArticlesFound);
+
     }
 
     /**
