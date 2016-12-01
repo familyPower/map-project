@@ -189,8 +189,8 @@ console.log("places-", places());
       }
 
       // Retrieve information for the address.
-      nyt.getNYTArticles(self.userAddress, nytArticlesFound);
-      wiki.getWikipediaArticles(self.userAddress, wikipediaArticlesFound);
+      nyt.getNYTArticles(self.address(), nytArticlesFound);
+      wiki.getWikipediaArticles(self.address(), wikipediaArticlesFound);
 
     }
 
