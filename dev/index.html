@@ -34,10 +34,18 @@
     </div>    <!-- first row -->
 
 
+    <!-- Header row -->
+    <div class = "row">
+      <div class="col-lg-4 col-md-4 col-xs-12">
+        Places of Interest
+      </div>
+      <div class="col-lg-8 col-md-8 col-xs-12">
+        <span data-bind="text: formattedAddress"> </span>
+      </div>
+    </div>
       <!-- list of items related to filter -->
     <div class = "row">   <!-- row 2 -->
       <div class="col-lg-4 col-md-4 col-xs-12" id="list-items">    <!-- row 2, col 1 -->
-        List Items
         <ul data-bind="foreach: places" id="marker-list">
           <li data-bind="attr: {id: Key}" class="marker-list-items" onclick="window.placeClicked(this)">
           <span data-bind="text: PlaceName"> </span>

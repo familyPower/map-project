@@ -381,15 +381,13 @@ console.log("markers:", _markers);
             if (status == google.maps.GeocoderStatus.OK) {
                 loc = results[0].geometry.location;
                 self.locationLatlon = results[0].geometry.location;
-console.log("lat", loc.lat());
-console.log("lng", loc.lng());
                 map.setCenter(results[0].geometry.location);
                 map.setZoom(15);
                 getPlaces();
                 g_callback_AddressFound(results[0].formatted_address);
-console.log("results: ", results[0]);
-console.log("results[0].formatted_address: ", results[0].formatted_address);
             } else {
+              // TODO: Error handler here; should display a message and do
+              // something reasonable, remain on current map or show world map
                 alert('Geocode was not successful for the following reason: ' + status);
             }
         });

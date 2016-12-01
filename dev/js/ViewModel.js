@@ -12,6 +12,9 @@ var vm = (function() {
     //self.address = ko.observable("Empire State Building");
     self.address = ko.observable("World View");
 
+    // Address found by googleMaps.
+    self.formattedAddress = ko.observable();
+
     // The places found by google maps for address.
     self.places = ko.observableArray();
 
@@ -167,9 +170,8 @@ console.log("places-", places());
     /**************************** Callbacks **************************/
 
     function addressFound(formattedAddress) {
-      // Display the address found.
-      self.address(formattedAddress);
-
+      // Display the address found
+      self.formattedAddress(formattedAddress);
     }
 
     function addressProcessed() {
@@ -187,8 +189,8 @@ console.log("places-", places());
       }
 
       // Retrieve information for the address.
-      nyt.getNYTArticles(self.address(), nytArticlesFound);
-      wiki.getWikipediaArticles(self.address(), wikipediaArticlesFound);
+      nyt.getNYTArticles(self.userAddress, nytArticlesFound);
+      wiki.getWikipediaArticles(self.userAddress, wikipediaArticlesFound);
 
     }
 
