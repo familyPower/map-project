@@ -78,14 +78,19 @@
         </div>
         <div class="col-xs-6" id="wiki-articles"> <!-- row 3, col 2 -->
           Wikipedia Articles
-          <ul data-bind="foreach: wikipediaArticles" id="wikipedia-article-list">
-            <li>
-              <!-- <span data-bind="text: title"> </span> -->
-            <a data-bind="attr: { href: web_url}" target="new">
-                <span data-bind="text: title"> </span>
-              </a>
-            </li>
-          </ul>
+          <div data-bind="ifnot: noWikipediaData">
+            <ul data-bind="foreach: wikipediaArticles" id="wikipedia-article-list">
+              <li>
+                <!-- <span data-bind="text: title"> </span> -->
+              <a data-bind="attr: { href: web_url}" target="new">
+                  <span data-bind="text: title"> </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div data-bind="if: noWikipediaData">
+            No articles returned from wikipedia.org.
+          </div>
         </div>
       </div>    <!-- row 3 -->
 

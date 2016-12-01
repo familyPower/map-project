@@ -8,6 +8,9 @@ var vm = (function() {
     var self = this;
 
     /***************************** Knockout Bindings **************************/
+    //
+    self.noWikipediaData = ko.observable(false);
+
     // The center of the map.
     //self.address = ko.observable("Empire State Building");
     self.address = ko.observable("World View");
@@ -24,7 +27,6 @@ var vm = (function() {
     // Container for Wikipedia articles
     self.wikipediaArticles = ko.observableArray();
 
-    self.wikiData = undefined;
     self.nytData = undefined;
 
     // holds articles from the New York Times
@@ -209,22 +211,24 @@ console.log("places-", places());
         self.nytArticles.push({title: item.headline.main.split(";")[0],
           web_url: item.web_url});
       }
-console.log("self.newsArticles.docs: ", self.nytArticles());
+
     }
 
     function wikipediaArticlesFound(wikipediaD) {
-      self.wikiData = wikipediaD;
       self.wikipediaArticles.removeAll();
 
-      //Load the observablearray with relevant data.
-      for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
-        self.wikipediaArticles.push({title: wikipediaD.articles[1][i],
-        web_url: wikipediaD.articles[3][i]});
+      if ( wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0 ) {
+        self.noWikipediaData(false);
+        //Load the observablearray with relevant data.
+        for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
+          self.wikipediaArticles.push({title: wikipediaD.articles[1][i],
+          web_url: wikipediaD.articles[3][i]});
+        }
+      } else {
+        self.noWikipediaData(true);
       }
-
-console.log("self.wikiArticles.articles[3]: ", self.wikipediaArticles());
-
     }
+
     /**************************** End Callbacks **************************/
 
     // Expose public methods.
