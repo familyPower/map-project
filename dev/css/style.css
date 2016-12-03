@@ -6,6 +6,11 @@ body {
   padding: 0;
 }
 
+li.marker-list-items {
+  color: blue;
+  cursor: pointer;
+}
+
 
 /*div[class*="row"] {
   border: 1px dotted rgba(0, 0, 0, 0.5);
