@@ -95,10 +95,10 @@ var gm = (function() {
      *
      * @return {type}  description
      */
-    publicMethods.initMap = function() {
+    publicMethods.initMap = function(address) {
         // Constructor creates a new map - only center and zoom are required.
         map = new google.maps.Map(document.getElementById('map-canvas'), {
-            center: new google.maps.LatLng(40.748817, -73.985428),
+            center: new google.maps.LatLng(0,0),  //40.748817, -73.985428),
             //center: {lat: 0, lng: 0},
             zoom: 20,
             //minZoom: 1,
@@ -110,7 +110,9 @@ var gm = (function() {
         bounds = new google.maps.LatLngBounds();
         largeInfowindow = new google.maps.InfoWindow();
 
-        getPlaces();
+        publicMethods.updateMap(address);
+        // self._address = address;
+        // getPlaces();
         //   addressToLatlng(address);
         //      getPlaces();
     }
@@ -125,6 +127,9 @@ var gm = (function() {
         addressToLatlng(address);
     }
 
+    // publicMethods.getMapCenterAddress() {
+    //   return map.
+    // }
     /*************************** private methods ***************************/
 
     /**

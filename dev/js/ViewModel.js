@@ -7,10 +7,13 @@
 var vm = (function() {
     var self = this;
 
+    /****************************** Constants */
+    var DEFAULT_LOCATION = "Empire State Building";
+
     /***************************** Knockout Bindings **************************/
     // Keeps
     var _bouncingMarker;
-    var _selectedMarkerTitle = ko.observable;
+    var _selectedMarkerTitle = ko.observable();
 
     //
     self.noWikipediaData = ko.observable(false);
@@ -199,7 +202,7 @@ console.log("places-", places());
 
       assert(self.address().length > 0);
       //gm.updateMap(self.address());
-      return gm.initMap();
+      return gm.initMap(DEFAULT_LOCATION);
     }
 
     publicMethods.placeClicked = function(mrkr_id) {

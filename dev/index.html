@@ -16,7 +16,7 @@
       <form data-bind="submit: updateAddress">
         <!-- filter string; sent to maps -->
         <div class="col-lg-1 col-md-1" id="filter-div">  <!-- row 1, col 1 -->
-          <button id="submit-btn" type="submit">Filter</button>
+          <button id="submit-btn" type="submit">Search</button>
           <!-- <button id="submit-btn" data-bind="click: updateAddress">Filter</button> -->
           <!-- <button type="submit" id="submit-btn" data-bind="updateAddress">Filter</button> -->
           <!-- <label for="filter-input">Filter By: </label> -->
@@ -35,14 +35,14 @@
 
 
     <!-- Header row -->
-    <div class = "row">
+    <header class = "row">
       <div class="col-lg-4 col-md-4 col-xs-12">
-        <h4>Places of Interest<h4>
+        <h4>Places of Interest</h4>
       </div>
       <div class="col-lg-8 col-md-8 col-xs-12">
-        <span data-bind="text: formattedAddress"> </span>
+        <h4><span data-bind="text: formattedAddress"> </span></h4>
       </div>
-    </div>
+    </header>
 
     <!-- list of items related to filter -->
     <div class = "row">   <!-- row 2 -->
