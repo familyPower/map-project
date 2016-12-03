@@ -12,11 +12,13 @@ var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
 
+    var callback_markerClicked;
 
     // TODO: add "_" to each private variable
     // Public members - getters and setters available
     var _address = "sidney nsw";
     var locationLatlon;
+    var _selectedMarker;
 
     // Public members - getters available.
     var _markers = [];
@@ -26,7 +28,6 @@ var gm = (function() {
     var map;
     var mapStyles; // may be set by user in future version
     var largeInfowindow;
-    var _bouncingMarker;
     var bounds;
 
 
@@ -114,6 +115,11 @@ console.log("markers:", _markers);
         //      getPlaces();
     }
 
+    publicMethods.setBouncingCallback = function(callback) {
+      precondition(callback);
+
+      callback_markerClicked = callback;  // bounce function
+    }
     publicMethods.updateMap = function(address) {
         var addr = publicMethods.setAddress(address);
         addressToLatlng(address);
@@ -129,7 +135,7 @@ console.log("markers:", _markers);
      */
     publicMethods.populateInfowindow = function(marker) {
             // Start the marker bouncing.
-            toggleBounce(marker);
+            //toggleBounce(marker);
 
             // Check to make sure the infowindow is not already opened on this marker.
             if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
@@ -138,41 +144,42 @@ console.log("markers:", _markers);
                 largeInfowindow.open(map, marker);
                 // Make sure the marker property is cleared if the infowindow is closed.
                 largeInfowindow.addListener('closeclick', function() {
+                    callback_markerClicked(marker); // stop bouncing
                     //        largeInfowindow.setMarker(null);
-                    toggleBounce(marker);
+                    //toggleBounce(marker);
                 });
             } // if
         } // function: populateInfowindow
 
-    /**
-     * toggleBounce - description
-     *
-     * @param  {type} marker description
-     * @return {type}        description
-     */
-    function toggleBounce(marker) {
-        // If the marker.animation == drop, then set it to null
-        if (marker.getAnimation() == google.maps.Animation.Drop) {
-            marker.setAnimation(null);
-        }
-        // If the selected marker is already animated, then stop animation.
-        if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
-            _bouncingMarker = null;
-        } else {
-            // stop a marker that is already bouncing.
-            if (_bouncingMarker) {
-                _bouncingMarker.setAnimation(null);
-                _bouncingMarker = null;
-            }
-            // Tell the marker to bounce.
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-
-            // Remember which marker is bouncing.
-            _bouncingMarker = marker;
-        }
-    }
-
+    // /**
+    //  * toggleBounce - description
+    //  *
+    //  * @param  {type} marker description
+    //  * @return {type}        description
+    //  */
+    // function toggleBounce(marker) {
+    //     // If the marker.animation == drop, then set it to null
+    //     if (marker.getAnimation() == google.maps.Animation.Drop) {
+    //         marker.setAnimation(null);
+    //     }
+    //     // If the selected marker is already animated, then stop animation.
+    //     if (marker.getAnimation() !== null) {
+    //         marker.setAnimation(null);
+    //         _bouncingMarker = null;
+    //     } else {
+    //         // stop a marker that is already bouncing.
+    //         if (_bouncingMarker) {
+    //             _bouncingMarker.setAnimation(null);
+    //             _bouncingMarker = null;
+    //         }
+    //         // Tell the marker to bounce.
+    //         marker.setAnimation(google.maps.Animation.BOUNCE);
+    //
+    //         // Remember which marker is bouncing.
+    //         _bouncingMarker = marker;
+    //     }
+    // }
+    //
     /**
      * setMapStyles - description
      *
@@ -323,10 +330,13 @@ console.log("markers:", _markers);
                 position: place.geometry.location
             });
 
-            // Create an onclick even to open an infowindow at each marker.
+            // Create an onclick event to open an infowindow at each marker.
             marker.addListener('click', function() {
-                publicMethods.populateInfowindow(this);
-                //toggleBounce(this);
+              // todo: set the variable to remember which marker was clicked
+              setSelectedMarkerByMarker(marker);
+              callback_markerClicked(this); // toggle bounce
+              publicMethods.populateInfowindow(this);
+              //toggleBounce(this);
             });
 
             // push the marker to out array of _markers.
@@ -399,24 +409,56 @@ console.log("markers:", _markers);
     } //  addressToLatlng
 
 
+    publicMethods.setSelectedMarker = function(key) {
+      assert(key.length > 0);
+      assert(typeof key == "string");
+
+      var ndx = findMarkerInArrayByKey(_markers, key);
+      if (ndx < 0) {  // not found
+        // do something
+        self._selectedMarker = undefined;
+      } else {
+        self._selectedMarker = _markers[ndx];
+      }
+
+      return self._selectedMarker;
+    }
+
+
+    function setSelectedMarkerByMarker(marker) {
+      var ndx = findMarkerInArrayByMarker(_markers, marker);
+      if (ndx < 0) { // not found
+        // do something
+      } else {
+        self._selectedMarker = _markers[ndx];
+      }
+
+      return self._selectedMarker;
+    }
+
+    publicMethods.getSelectedMarker = function() {
+      return self._selectedMarker;
+    }
+
     /**
      * placeSelected - description
      *
      * @param  {type} d description
      * @return {type}   description
      */
-    publicMethods.placeSelected = function(key, callback) {
+    publicMethods.placeSelected = function(marker_key) {
+      assert(marker_key == self._selectedMarker.Key);
+      assert(self._selectedMarker);
         //var marker = d.getAttribute("data-id");
 
-        var ndx = findInArray(_markers, key);
-        if (ndx < 0) {  // not found
-          // do something
-        }
-
-        var data = _markers[ndx];
-        assert(data);
-
-        publicMethods.populateInfowindow(data.Marker);
+        // var ndx = findInArray(_markers, key);
+        // if (ndx < 0) {  // not found
+        //   // do something
+        // }
+        //
+        // var data = _markers[ndx];
+        // assert(data);
+        publicMethods.populateInfowindow(self._selectedMarker.Marker);
     }
 
     // support methods

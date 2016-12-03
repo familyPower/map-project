@@ -20,6 +20,24 @@ function isValidLatLong(latLon) {
     return false;
 }
 
+
+/**
+ * isEqualLatLng - description
+ *
+ * @param  {type} loc1 description
+ * @param  {type} loc2 description
+ * @return {boolean}   Returns true if the two locations point
+ *    to the same place.
+ */
+function isEqualLatLng(loc1, loc2) {
+  var loc1Lat = loc1.lat();
+  var loc1Lng = loc1.lng();
+  var loc2Lat = loc2.lat();
+  var loc2Lng = loc2.lng();
+
+  return loc1.lat() == loc2.lat() && loc1.lng() == loc2.lng();
+}
+
 function assert(condition, message) {
     if (!condition) {
         throw message || "Assertion failed";
@@ -38,12 +56,25 @@ function postcondition(condition, message) {
     }
 }
 
-function findInArray(array, key) {
+function findMarkerInArrayByKey(array, key) {
   var bFound = false;
 
   var iRv = -1; // not found
   for( var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
     if (key == data.Key) {
+      iRv = i;
+      bFound = true;
+    }
+  }
+  return iRv;
+}
+
+function findMarkerInArrayByMarker(array, marker) {
+  var bFound = false;
+
+  var iRv = -1; // not found
+  for( var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
+    if (isEqualLatLng(array[i].Marker.position, marker.position)) {
       iRv = i;
       bFound = true;
     }

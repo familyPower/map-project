@@ -43,7 +43,8 @@
         <span data-bind="text: formattedAddress"> </span>
       </div>
     </div>
-      <!-- list of items related to filter -->
+
+    <!-- list of items related to filter -->
     <div class = "row">   <!-- row 2 -->
       <div class="col-lg-4 col-md-4 col-xs-12" id="list-items">    <!-- row 2, col 1 -->
         <ul data-bind="foreach: places" id="marker-list">
@@ -57,6 +58,11 @@
       <div class="col-lg-8 col-md-8 col-xs-12">    <!-- row 2, col 2, map -->
         <div id="map-canvas"></div>
       </div>    <!-- row 2, col 2 -->
+
+      // Information on selected marker/place
+      <!-- <div class="row" data-bind="ifnot: placeSelected">
+
+      </div> -->
 
 
 
@@ -76,6 +82,7 @@
           </ul>
 
         </div>
+
         <div class="col-xs-6" id="wiki-articles"> <!-- row 3, col 2 -->
           Wikipedia Articles
           <div data-bind="ifnot: noWikipediaData">
