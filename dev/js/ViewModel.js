@@ -221,14 +221,18 @@ console.log("places-", places());
 
         // start/stop bouncing
 
-        var marker = gm.getSelectedMarker();
+        var marker = ! gm.getSelectedMarker() ? undefined :
+                          gm.getSelectedMarker();
 
         // No markers currently selected.
         if ( ! marker /*&& gm.getSelectedMarker() === self._selectedMarker*/) {
           gm.setSelectedMarker(mrkr_id);
           marker = gm.getSelectedMarker();
-          gm.populateInfowindow(marker);
-          gm.toggleBounce(marker);
+          gm.populateInfowindow(marker.Marker);
+          gm.toggleBounce(marker.Marker);
+          self.selectedMarkerTitle(marker.Marker.title);
+          self.userSelectedLocation(true);
+
 //          self.userSelectedLocation(true);
         } else if (marker.Key == mrkr_id)
           // marker already selected and it's the same marker
@@ -236,9 +240,11 @@ console.log("places-", places());
           // clear infoWindow,
           // clear selected marker
         {
-          gm.toggleBounce(marker);
+          gm.toggleBounce(marker.Marker);
           gm.closeInfoWindow();
           gm.clearSelectedMarker(mrkr_id);
+          self.selectedMarkerTitle(null);
+          self.userSelectedLocation(false);
         } else if (marker.Key != mrkr_id)
           // marker alaready selected and bouncing and infoWindow present.
           // Stop bouncing and close infoWindow
@@ -249,8 +255,12 @@ console.log("places-", places());
           gm.toggleBounce(marker);
           gm.closeInfoWindow();
           gm.setSelectedMarker(mrkr_id);
-          gm.toggleBounce(gm.getSelectedMarker());
-          gm.populateInfowindow(gm.getSelectedMarker());
+
+          marker = gm.getSelectedMarker();
+          gm.toggleBounce(marker.Marker);
+          gm.populateInfowindow(marker.Marker);
+          self.selectedMarkerTitle(marker.Marker.title);
+          self.userSelectedLocation(true);
         } else
           // Some sort of error occurred or some unexpected/unplanned condition
           // occurred. Should never get here.
