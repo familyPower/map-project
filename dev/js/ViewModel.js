@@ -10,13 +10,17 @@ var vm = (function() {
     /***************************** Knockout Bindings **************************/
     // Keeps
     var _bouncingMarker;
+    var _selectedMarkerTitle = ko.observable;
 
     //
     self.noWikipediaData = ko.observable(false);
 
+    //
+    self.userSelectedLocation = ko.observable(false);
+
     // The center of the map.
     //self.address = ko.observable("Empire State Building");
-    self.address = ko.observable("World View");
+    self.address = ko.observable("Empire State Building");
 
     // Address found by googleMaps.
     self.formattedAddress = ko.observable();
@@ -128,6 +132,7 @@ console.log("places-", places());
      */
     function toggleBounce(mkr) {
       var marker = mkr;
+      _selectedMarkerTitle = "";
         // If the marker.animation == drop, then set it to null
         if (marker.getAnimation() == google.maps.Animation.Drop) {
             marker.setAnimation(null);
@@ -136,17 +141,21 @@ console.log("places-", places());
         if (marker.getAnimation() !== null) {
             marker.setAnimation(null);
             _bouncingMarker = null;
+            userSelectedLocation = false;
         } else {
             // stop a marker that is already bouncing.
             if (_bouncingMarker) {
                 _bouncingMarker.setAnimation(null);
                 _bouncingMarker = null;
+                userSelectedLocation = false;
             }
             // Tell the marker to bounce.
             marker.setAnimation(google.maps.Animation.BOUNCE);
 
             // Remember which marker is bouncing.
             _bouncingMarker = marker;
+            userSelectedLocation = true;
+            _selectedMarkerTitle = _bouncingMarker.title;
         }
     }
 
@@ -187,7 +196,10 @@ console.log("places-", places());
       g_callback_AddressFound = addressFound;
       g_callback_AddressProcessed = addressProcessed;
       gm.setBouncingCallback(toggleBounce);
-        return gm.initMap();
+
+      assert(self.address().length > 0);
+      //gm.updateMap(self.address());
+      return gm.initMap();
     }
 
     publicMethods.placeClicked = function(mrkr_id) {
@@ -205,7 +217,9 @@ console.log("places-", places());
         // var k = data.Key;
 
         // start/stop bouncing
-        toggleBounce(gm.setSelectedMarker(mrkr_id).Marker);
+        _selectedMarker = gm.setSelectedMarker(mrkr_id);
+
+        toggleBounce(_selectedMarker.Marker);
 
         gm.placeSelected(mrkr_id);
 //        nytApi.getNYTArticles();

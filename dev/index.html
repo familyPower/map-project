@@ -59,10 +59,12 @@
         <div id="map-canvas"></div>
       </div>    <!-- row 2, col 2 -->
 
-      // Information on selected marker/place
-      <!-- <div class="row" data-bind="ifnot: placeSelected">
-
-      </div> -->
+      <!-- Information on selected marker/place -->
+      <div class="row" data-bind="if: userSelectedLocation">
+        <div class="col-lg-12 col-md-12 col-xs-12">
+          <div data-bind="text: _selectedMarkerTitle"> </div>
+        </div>
+      </div>
 
 
 

@@ -4,6 +4,7 @@
  * Internal Dependencies: None.
  * External Dependencies: maps.google.com
  * Notes:      //https://snazzymaps.com
+ *
  */
 
 g_callback_AddressFound = undefined;
@@ -70,9 +71,6 @@ var gm = (function() {
     }
 
     publicMethods.getMarkersData = function() {
-console.log("self.markers:", self._markers);
-console.log("markers:", _markers);
-
         var returnArray = [];
         var title;
         var key;
@@ -100,9 +98,9 @@ console.log("markers:", _markers);
     publicMethods.initMap = function() {
         // Constructor creates a new map - only center and zoom are required.
         map = new google.maps.Map(document.getElementById('map-canvas'), {
-            center: new google.maps.LatLng(0, 0),
+            center: new google.maps.LatLng(40.748817, -73.985428),
             //center: {lat: 0, lng: 0},
-            zoom: 2,
+            zoom: 20,
             //minZoom: 1,
             styles: setMapStyles(),
             mapTypeId: 'roadmap',
@@ -111,6 +109,8 @@ console.log("markers:", _markers);
 
         bounds = new google.maps.LatLngBounds();
         largeInfowindow = new google.maps.InfoWindow();
+
+        getPlaces();
         //   addressToLatlng(address);
         //      getPlaces();
     }
@@ -270,10 +270,11 @@ console.log("markers:", _markers);
     function getPlaces() {
         var service = new google.maps.places.PlacesService(map);
 
+        self._places = [];
         service.nearbySearch({
             location: map.center,
             radius: 16000,
-            type: ['park', 'library', 'zoo']
+            types: ['park', 'library', 'zoo', 'museum', 'aquarium']
         }, processResults);
     }
 
@@ -283,22 +284,26 @@ console.log("markers:", _markers);
             return google.maps.places.PlacesServiceStatus;
         } else {
             // Remember the places
-            self._places = results; // results == places
+              Array.prototype.push.apply(self._places, results); // results == places
 
-            createMarkers(results);
+              createMarkers(results);
 
-            g_callback_AddressProcessed();
+              g_callback_AddressProcessed();
 
-            // if (pagination.hasNextPage) {
-            //   var moreButton = document.getElementById('more');
-            //
-            //   moreButton.disabled = false;
-            //
-            //   moreButton.addEventListener('click', function() {
-            //     moreButton.disabled = true;
-            //     pagination.nextPage();
-            //   });
-            // }
+              // if (pagination.hasNextPage) {
+              //   var moreButton = document.getElementById('more');
+              //
+              //   moreButton.disabled = false;
+              //
+              //   moreButton.addEventListener('click', function() {
+              //     moreButton.disabled = true;
+              //     pagination.nextPage();
+              //   });
+              // }
+              //
+          if (pagination.hasNextPage) {
+              pagination.nextPage();
+          }
         }
     }
 
