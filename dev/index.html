@@ -17,20 +17,12 @@
         <!-- filter string; sent to maps -->
         <div class="col-lg-1 col-md-1" id="filter-div">  <!-- row 1, col 1 -->
           <button id="submit-btn" type="submit">Search</button>
-          <!-- <button id="submit-btn" data-bind="click: updateAddress">Filter</button> -->
-          <!-- <button type="submit" id="submit-btn" data-bind="updateAddress">Filter</button> -->
-          <!-- <label for="filter-input">Filter By: </label> -->
         </div>  <!-- row 1, col 1 -->
 
         <div class = "col-lg-11 col-md-11">  <!-- row 1, column 2> -->
           <input data-bind='value: address' type="text" id="filter-input" value="">
         </div>    <!-- row 1, column 2> -->
       </form>
-
-      <div class="col-xs-2">  <!-- row 1, col 3 -->
-        <!-- <button id="submit-btn">Submit</button> -->
-      </div>    <!-- row 1, col 3 -->
-
     </div>    <!-- first row -->
 
 
@@ -58,21 +50,18 @@
       <div class="col-lg-8 col-md-8 col-xs-12">    <!-- row 2, col 2, map -->
         <div id="map-canvas"></div>
       </div>    <!-- row 2, col 2 -->
-
-      <!-- Information on selected marker/place -->
-      <div class="row" data-bind="if: userSelectedLocation">
-        <div class="col-lg-6 col-md-6 col-xs-12">
-          Wikipedia Articles On
-          <div data-bind="text: _selectedMarkerTitle"> </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-xs-12">
-          <div> Yelp articles under development.</div>
-        </div>
-      </div>
-
-
-
     </div>    <!-- row 2 -->
+
+    <!-- Information on selected marker/place -->
+    <div class="row" data-bind="if: userSelectedLocation">
+      <div class="col-lg-6 col-md-6 col-xs-12">
+        Wikipedia Articles On
+        <div data-bind="text: selectedMarkerTitle"> </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-xs-12">
+        <div> Yelp articles under development.</div>
+      </div>
+    </div>
 
       <!-- Related informations -->
       <div class="row">   <!-- row 3 -->

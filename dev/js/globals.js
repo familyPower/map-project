@@ -70,11 +70,15 @@ function findMarkerInArrayByKey(array, key) {
 }
 
 function findMarkerInArrayByMarker(array, marker) {
+  assert(array);
+  assert(marker);
+
   var bFound = false;
 
   var iRv = -1; // not found
   for( var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
-    if (isEqualLatLng(array[i].Marker.position, marker.position)) {
+    assert(array[i].Marker);
+    if (array[i].Marker.position.equals(marker.position)) {
       iRv = i;
       bFound = true;
     }

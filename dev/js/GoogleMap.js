@@ -9,11 +9,13 @@
 
 g_callback_AddressFound = undefined;
 g_callback_AddressProcessed = undefined;
+g_callback_infowindowClosed = undefined;
 var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
 
     var callback_markerClicked;
+    var callback_infoWindowClosed;
 
     // TODO: add "_" to each private variable
     // Public members - getters and setters available
@@ -122,6 +124,9 @@ var gm = (function() {
 
       callback_markerClicked = callback;  // bounce function
     }
+    publicMethods.setInfoWindowClosedCallback = function(callback) {
+      callback_infoWindowClosed = callback;
+    }
     publicMethods.updateMap = function(address) {
         var addr = publicMethods.setAddress(address);
         addressToLatlng(address);
@@ -138,53 +143,65 @@ var gm = (function() {
      * @param  {type} marker description
      * @return {type}        description
      */
-    publicMethods.populateInfowindow = function(marker) {
+    publicMethods.populateInfowindow = function(mrkr) {
             // Start the marker bouncing.
             //toggleBounce(marker);
-
+            var marker = publicMethods.getSelectedMarker().Marker;  //mrkr.Marker;
             // Check to make sure the infowindow is not already opened on this marker.
             if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
-                largeInfowindow.maker = marker;
+                largeInfowindow.marker = marker;
                 largeInfowindow.setContent('<div>' + marker.title + '</div>');
                 largeInfowindow.open(map, marker);
                 // Make sure the marker property is cleared if the infowindow is closed.
                 largeInfowindow.addListener('closeclick', function() {
-                    callback_markerClicked(marker); // stop bouncing
+                    callback_infoWindowClosed(marker); // stop bouncing
                     //        largeInfowindow.setMarker(null);
                     //toggleBounce(marker);
                 });
             } // if
         } // function: populateInfowindow
 
-    // /**
-    //  * toggleBounce - description
-    //  *
-    //  * @param  {type} marker description
-    //  * @return {type}        description
-    //  */
-    // function toggleBounce(marker) {
-    //     // If the marker.animation == drop, then set it to null
-    //     if (marker.getAnimation() == google.maps.Animation.Drop) {
-    //         marker.setAnimation(null);
-    //     }
-    //     // If the selected marker is already animated, then stop animation.
-    //     if (marker.getAnimation() !== null) {
-    //         marker.setAnimation(null);
-    //         _bouncingMarker = null;
-    //     } else {
-    //         // stop a marker that is already bouncing.
-    //         if (_bouncingMarker) {
-    //             _bouncingMarker.setAnimation(null);
-    //             _bouncingMarker = null;
-    //         }
-    //         // Tell the marker to bounce.
-    //         marker.setAnimation(google.maps.Animation.BOUNCE);
-    //
-    //         // Remember which marker is bouncing.
-    //         _bouncingMarker = marker;
-    //     }
-    // }
-    //
+    publicMethods.closeInfoWindow = function() {
+      largeInfowindow.close();
+    }
+    /**
+     * toggleBounce - description
+     *
+     * @param  {type} marker description
+     * @return {type}        description
+     */
+     publicMethods.toggleBounce = function(marker) {
+      precondition(self._selectedMarker);
+      precondition(self._selectedMarker.Marker);
+
+      var marker = self._selectedMarker.Marker;
+        // If the marker.animation == drop, then set it to null
+
+          if (marker.getAnimation() && marker.getAnimation() ==
+                  google.maps.Animation.BOUNCE) {
+              marker.setAnimation(null);
+          } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+          }
+
+        // // If the selected marker is already animated, then stop animation.
+        // if (marker.getAnimation() !== null) {
+        //     marker.setAnimation(null);
+        //     _bouncingMarker = null;
+        // } else {
+        //     // stop a marker that is already bouncing.
+        //     if (_bouncingMarker) {
+        //         _bouncingMarker.setAnimation(null);
+        //         _bouncingMarker = null;
+        //     }
+        //     // Tell the marker to bounce.
+        //     marker.setAnimation(google.maps.Animation.BOUNCE);
+        //
+        //     // Remember which marker is bouncing.
+        //     _bouncingMarker = marker;
+        // }
+    }
+
     /**
      * setMapStyles - description
      *
@@ -343,7 +360,7 @@ var gm = (function() {
             // Create an onclick event to open an infowindow at each marker.
             marker.addListener('click', function() {
               // todo: set the variable to remember which marker was clicked
-              setSelectedMarkerByMarker(marker);
+              setSelectedMarkerByMarker(this);
               callback_markerClicked(this); // toggle bounce
               publicMethods.populateInfowindow(this);
               //toggleBounce(this);
@@ -418,6 +435,9 @@ var gm = (function() {
         // return {status: geoLocStatus, location: loc};
     } //  addressToLatlng
 
+    publicMethods.clearSelectedMarker = function() {
+      self._selectedMarker = undefined;
+    }
 
     publicMethods.setSelectedMarker = function(key) {
       assert(key.length > 0);

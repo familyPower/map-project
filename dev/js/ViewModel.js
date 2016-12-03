@@ -13,7 +13,7 @@ var vm = (function() {
     /***************************** Knockout Bindings **************************/
     // Keeps
     var _bouncingMarker;
-    var _selectedMarkerTitle = ko.observable();
+    self.selectedMarkerTitle = ko.observable();
 
     //
     self.noWikipediaData = ko.observable(false);
@@ -117,51 +117,50 @@ console.log("places-", places());
         //places.sort():
     }
 
-    /****************************** Support Methods ***************************/
-    /**
-     * toggleBounce - description
-     *
-     * @param  {type} marker description
-     * @return {type}        description
-     * Assumptions           There several significant assumptions. first
-     *    only selected markers are bouncing.
-     *  2) Only one marker is bouncing at a time, this only one marker is ever
-     *      selected.
-     *  3) If no marker is bouncing, then nothing is selected.
-     *  4) If a marker or place is selected, then the marker will bounce.
-     *  5) If a second marker/place is selected when a marker is bouncing, then
-     *    the first marker will stop bouncing and the newly selected marker will
-     *    start bouncing.
-     */
-    function toggleBounce(mkr) {
-      var marker = mkr;
-      _selectedMarkerTitle = "";
-        // If the marker.animation == drop, then set it to null
-        if (marker.getAnimation() == google.maps.Animation.Drop) {
-            marker.setAnimation(null);
-        }
-        // If the selected marker is already animated, then stop animation.
-        if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
-            _bouncingMarker = null;
-            userSelectedLocation = false;
-        } else {
-            // stop a marker that is already bouncing.
-            if (_bouncingMarker) {
-                _bouncingMarker.setAnimation(null);
-                _bouncingMarker = null;
-                userSelectedLocation = false;
-            }
-            // Tell the marker to bounce.
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-
-            // Remember which marker is bouncing.
-            _bouncingMarker = marker;
-            userSelectedLocation = true;
-            _selectedMarkerTitle = _bouncingMarker.title;
-        }
-    }
-
+    // /****************************** Support Methods ***************************/
+    // /**
+    //  * toggleBounce - description
+    //  *
+    //  * @param  {type} marker description
+    //  * @return {type}        description
+    //  * Assumptions           There several significant assumptions. first
+    //  *    only selected markers are bouncing.
+    //  *  2) Only one marker is bouncing at a time, this only one marker is ever
+    //  *      selected.
+    //  *  3) If no marker is bouncing, then nothing is selected.
+    //  *  4) If a marker or place is selected, then the marker will bounce.
+    //  *  5) If a second marker/place is selected when a marker is bouncing, then
+    //  *    the first marker will stop bouncing and the newly selected marker will
+    //  *    start bouncing.
+    //  */
+    // function toggleBounce(mkr) {
+    //   var marker = mkr;
+    //   //self.selectedMarkerTitle();
+    //     // If the marker.animation == drop, then set it to null
+    //
+    //     if (self._selectedMarker)
+    //     if (marker.getAnimation() == google.maps.Animation.Drop) {
+    //         marker.setAnimation(null);
+    //     }
+    //     // If the selected marker is already animated, then stop animation.
+    //     if (marker.getAnimation() !== null) {
+    //         marker.setAnimation(null);
+    //         _bouncingMarker = null;
+    //     } else {
+    //         // stop a marker that is already bouncing.
+    //         if (_bouncingMarker) {
+    //             _bouncingMarker.setAnimation(null);
+    //             _bouncingMarker = undefined;
+    //         }
+    //         // Tell the marker to bounce.
+    //         marker.setAnimation(google.maps.Animation.BOUNCE);
+    //
+    //         // Remember which marker is bouncing.
+    //         self._bouncingMarker = marker;
+    //         self.selectedMarkerTitle(_bouncingMarker.title);
+    //     }
+    // }
+    //
 
     /**
      * isMarker - description
@@ -198,7 +197,8 @@ console.log("places-", places());
       // to be asynchronous.
       g_callback_AddressFound = addressFound;
       g_callback_AddressProcessed = addressProcessed;
-      gm.setBouncingCallback(toggleBounce);
+      gm.setBouncingCallback(bouncingStopedStarted);
+      gm.setInfoWindowClosedCallback(infoWindowClosed);
 
       assert(self.address().length > 0);
       //gm.updateMap(self.address());
@@ -220,11 +220,62 @@ console.log("places-", places());
         // var k = data.Key;
 
         // start/stop bouncing
-        _selectedMarker = gm.setSelectedMarker(mrkr_id);
 
-        toggleBounce(_selectedMarker.Marker);
+        var marker = gm.getSelectedMarker();
 
-        gm.placeSelected(mrkr_id);
+        // No markers currently selected.
+        if ( ! marker /*&& gm.getSelectedMarker() === self._selectedMarker*/) {
+          gm.setSelectedMarker(mrkr_id);
+          marker = gm.getSelectedMarker();
+          gm.populateInfowindow(marker);
+          gm.toggleBounce(marker);
+//          self.userSelectedLocation(true);
+        } else if (marker.Key == mrkr_id)
+          // marker already selected and it's the same marker
+          // stop bouncing,
+          // clear infoWindow,
+          // clear selected marker
+        {
+          gm.toggleBounce(marker);
+          gm.closeInfoWindow();
+          gm.clearSelectedMarker(mrkr_id);
+        } else if (marker.Key != mrkr_id)
+          // marker alaready selected and bouncing and infoWindow present.
+          // Stop bouncing and close infoWindow
+          // selected marker
+          // Start bouncing
+          // Show inforwindo
+        {
+          gm.toggleBounce(marker);
+          gm.closeInfoWindow();
+          gm.setSelectedMarker(mrkr_id);
+          gm.toggleBounce(gm.getSelectedMarker());
+          gm.populateInfowindow(gm.getSelectedMarker());
+        } else
+          // Some sort of error occurred or some unexpected/unplanned condition
+          // occurred. Should never get here.
+        {
+          assert(false);
+        }
+
+        function showHideMarkerLinks() {
+          var marker = gm.getSelectedMarker();
+
+          // No selected marker.
+          if (! marker) {
+            self.selectedMarkerTitle(null);
+            self.userSelectedLocation(false);
+          } else
+          // Marker selected
+          // Set observables,
+          // Search sites for info on marker using title.
+          {
+            self.selectedMarkerTitle(marker.title);
+            self.userSelectedLocation(true);
+          }
+        }
+
+//        gm.placeSelected(mrkr_id);
 //        nytApi.getNYTArticles();
 
         //"var mrkr = $(this).data('item-marker'); gm.populateInfowindow(mrkr);"
@@ -290,7 +341,13 @@ console.log("places-", places());
         self.noWikipediaData(true);
       }
     }
+    function bouncingStopedStarted(marker) {
 
+    }
+    function infoWindowClosed(marker) {
+    //  toggleBounce(marker);
+      self.userSelectedLocation(false);
+    }
     /**************************** End Callbacks **************************/
 
     // Expose public methods.
