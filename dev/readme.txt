@@ -5,4 +5,4 @@ Important: I borrowed snippets of code from various websites.
 *     Infowindow should close when the user clicks the same marker a second
 *      time. The bouncing already stops.
 *  2. Move Infowindow management to ViewModel.js
-*  3. 
+*  3. Add scrollbars.

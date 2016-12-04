@@ -334,7 +334,6 @@ console.log("places-", places());
         self.nytArticles.push({title: item.headline.main.split(";")[0],
           web_url: item.web_url});
       }
-
     }
 
     function wikipediaArticlesFound(wikipediaD) {
@@ -351,11 +350,31 @@ console.log("places-", places());
         self.noWikipediaData(true);
       }
     }
-    function bouncingStopedStarted(marker) {
+    function bouncingStopedStarted(mrkr, state) {
+      assert(mrkr);
+      assert('Key' in mrkr);
+      assert(isValidState(state));
+      assert(mrkr.Marker);
 
+      var marker = mrkr.Marker;
+
+      // Open the details view and show info
+      if( state == open ) {
+        self.selectedMarkerTitle(marker.title);
+        self.userSelectedLocation(true);
+      } else if (state == close) {
+        self.selectedMarkerTitle(null);
+        self.userSelectedLocation(false);
+      } else {
+        // this should never happen
+        assert(false);
+      }
     }
-    function infoWindowClosed(marker) {
-    //  toggleBounce(marker);
+    function infoWindowClosed(mrkr, state) {
+      assert ('Key' in mrkr);
+      assert (isValidState(state));
+
+      self.selectedMarkerTitle(null);
       self.userSelectedLocation(false);
     }
     /**************************** End Callbacks **************************/

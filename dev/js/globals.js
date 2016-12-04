@@ -3,6 +3,9 @@
  * purpose: Holds variable and functions that are available globally
  */
 
+var open = "OPEN";
+var close = "CLOSE";
+
 /**
  * isValidLatLong - description
  *
@@ -76,7 +79,7 @@ function findMarkerInArrayByMarker(array, marker) {
   var bFound = false;
 
   var iRv = -1; // not found
-  for( var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
+  for( var data, i = 0; bFound == false && i < array.length, data = array[i]; i++) {
     assert(array[i].Marker);
     if (array[i].Marker.position.equals(marker.position)) {
       iRv = i;
@@ -84,4 +87,8 @@ function findMarkerInArrayByMarker(array, marker) {
     }
   }
   return iRv;
+}
+
+function isValidState(state) {
+  return state == open || state == close;
 }

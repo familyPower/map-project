@@ -9,7 +9,6 @@
 
 g_callback_AddressFound = undefined;
 g_callback_AddressProcessed = undefined;
-g_callback_infowindowClosed = undefined;
 var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
@@ -59,6 +58,10 @@ var gm = (function() {
         return self._address;
     }
 
+    publicMethods.isBouncing = function() {
+      return (publicMethods.getSelectedMarker().Marker.getAnimation() ==
+        google.maps.Animation.BOUNCE);
+    }
     /**
      * anonymous function - latlon
      *
@@ -146,7 +149,8 @@ var gm = (function() {
     publicMethods.populateInfowindow = function(mrkr) {
             // Start the marker bouncing.
             //toggleBounce(marker);
-            var marker = publicMethods.getSelectedMarker().Marker;  //mrkr.Marker;
+            var marker = ('Key' in mrkr) ? publicMethods.getSelectedMarker().Marker :
+                            mrkr;  //mrkr.Marker;
             // Check to make sure the infowindow is not already opened on this marker.
             if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
                 largeInfowindow.marker = marker;
@@ -154,7 +158,7 @@ var gm = (function() {
                 largeInfowindow.open(map, marker);
                 // Make sure the marker property is cleared if the infowindow is closed.
                 largeInfowindow.addListener('closeclick', function() {
-                    callback_infoWindowClosed(marker); // stop bouncing
+                    infoWindowClosed(marker); // stop bouncing
                     //        largeInfowindow.setMarker(null);
                     //toggleBounce(marker);
                 });
@@ -163,6 +167,7 @@ var gm = (function() {
 
     publicMethods.closeInfoWindow = function() {
       largeInfowindow.close();
+      largeInfowindow.marker = null;
     }
     /**
      * toggleBounce - description
@@ -170,11 +175,10 @@ var gm = (function() {
      * @param  {type} marker description
      * @return {type}        description
      */
-     publicMethods.toggleBounce = function(marker) {
-      precondition(self._selectedMarker);
-      precondition(self._selectedMarker.Marker);
+     publicMethods.toggleBounce = function(mrkr) {
+      precondition(self._selectedMarker || mrkr);
 
-      var marker = self._selectedMarker.Marker;
+      var marker = mrkr ? (('Key' in mrkr) ? mrkr.Marker : mrkr) : self._selectedMarker.Marker;
         // If the marker.animation == drop, then set it to null
 
           if (marker.getAnimation() && marker.getAnimation() ==
@@ -360,9 +364,9 @@ var gm = (function() {
             // Create an onclick event to open an infowindow at each marker.
             marker.addListener('click', function() {
               // todo: set the variable to remember which marker was clicked
-              setSelectedMarkerByMarker(this);
-              callback_markerClicked(this); // toggle bounce
-              publicMethods.populateInfowindow(this);
+              // publicMethods.populateInfowindow(this);
+              // publicMethods.toggleBounce();
+              markerClicked(this); // toggle bounce
               //toggleBounce(this);
             });
 
@@ -454,6 +458,13 @@ var gm = (function() {
       return self._selectedMarker;
     }
 
+    publicMethods.findMarkerFromMarker = function(mrkr) {
+      var ndx = findMarkerInArrayByMarker(_markers, mrkr);
+
+      if (ndx >= 0) {
+        return _markers[ndx];
+      }
+    }
 
     function setSelectedMarkerByMarker(marker) {
       var ndx = findMarkerInArrayByMarker(_markers, marker);
@@ -467,7 +478,7 @@ var gm = (function() {
     }
 
     publicMethods.getSelectedMarker = function() {
-      return self._selectedMarker;
+      return self._selectedMarker ? self._selectedMarker : undefined;
     }
 
     /**
@@ -494,6 +505,98 @@ var gm = (function() {
     // support methods
     function clearMarkers() {
         _markers.length = 0;
+    }
+
+
+    /**
+     * markerClicked - description
+     *
+     * @param  {type} marker description
+     * @return {type}        description
+     */
+    function markerClicked(marker) {
+      var currentMarker = self._selectedMarker;
+      var newMarker = publicMethods.findMarkerFromMarker(marker);
+      assert(newMarker && 'Key' in newMarker);
+
+      self._selectedMarker = null;
+
+      if ( ! currentMarker )
+      // There is no current marker. So the clicked marker is a new marker
+      {
+        // Update the currently selected marker
+        self._selectedMarker = currentMarker = newMarker;
+
+        // start the new marker bouncing
+        publicMethods.toggleBounce();
+
+        // open the infoWindow
+        publicMethods.populateInfowindow(self._selectedMarker);
+
+        // notify UI
+        callback_markerClicked(currentMarker, open);
+
+      } else if (currentMarker && currentMarker.Key == newMarker.Key)
+        // The marker clicked is the same as the currently selected marker
+        // Stop bouncing, closeInfoWindow, notify UI
+        // Stop bouncing
+      {
+        if (marker.getAnimation() == google.maps.Animation.BOUNCE) {
+          publicMethods.toggleBounce(currentMarker);
+        }
+        // closeInfoWindow
+        publicMethods.closeInfoWindow();
+        // notify UI
+        callback_markerClicked(currentMarker, close);
+      }
+      else if (currentMarker && currentMarker.Key != newMarker.Key)
+      // The a different marker was clicked, so
+      // Stop the currently bouncing marker, close the currentInfoWindow
+      // Notify UI
+      // then
+      // Update the currently selected marker, start the new marker bouncing,
+      // open the infoWindowClosed, notify UI
+      {
+        // Stop bouncing
+        if (marker.getAnimation() == google.maps.Animation.BOUNCE) {
+          publicMethods.toggleBounce(currentMarker);
+        }
+        // close the currentInfoWindow
+        publicMethods.closeInfoWindow();
+
+        // Notify UI
+        callback_markerClicked(currentMarker, close);
+
+        // Update the currently selected marker
+        self._selectedMarker = newMarker;
+
+        // start the new marker bouncing
+        publicMethods.toggleBounce();
+
+        // open the infoWindow
+        publicMethods.populateInfowindow(self._selectedMarker);
+
+        // notify UI
+        callback_markerClicked(currentMarker, open);
+      }
+    }
+
+    /**
+     * infoWindowClosed - description
+     *
+     * @param  {type} marker description
+     * @return {type}        description
+     *
+     */
+    function infoWindowClosed(marker) {
+      // stop bouncing
+      publicMethods.toggleBounce();
+
+      // close infoWindow
+      publicMethods.closeInfoWindow();
+
+      // notify UI
+      callback_infoWindowClosed(marker, close);
     }
 
     // return object containing public methods
