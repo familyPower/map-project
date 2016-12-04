@@ -558,7 +558,7 @@ var gm = (function() {
       // open the infoWindowClosed, notify UI
       {
         // Stop bouncing
-        if (marker.getAnimation() == google.maps.Animation.BOUNCE) {
+        if (currentMarker.Marker.getAnimation() == google.maps.Animation.BOUNCE) {
           publicMethods.toggleBounce(currentMarker);
         }
         // close the currentInfoWindow
@@ -571,7 +571,7 @@ var gm = (function() {
         self._selectedMarker = newMarker;
 
         // start the new marker bouncing
-        publicMethods.toggleBounce();
+        publicMethods.toggleBounce(newMarker);
 
         // open the infoWindow
         publicMethods.populateInfowindow(self._selectedMarker);
