@@ -1,6 +1,6 @@
 /**
  * Filename: globals.js
- * purpose: Holds variable and functions that are available globally
+ * purpose: Holds variable, constants and functions that are available globally.
  */
 
 // Indicates the current or desired state of the details row.
@@ -176,7 +176,7 @@ function arrayContains(array, value) {
  * isValidState - Used to ensure that a valid state place detail panel.
  *
  * @param  {type} state The state used, as a parameter etc.
- * @return {type}       true if state is valid, else false. 
+ * @return {type}       true if state is valid, else false.
  */
 function isValidState(state) {
   return state == open || state == close;
