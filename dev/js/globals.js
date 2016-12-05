@@ -1,4 +1,4 @@
-/**
+/** done
  * Filename: globals.js
  * purpose: Holds variable, constants and functions that are available globally.
  */
