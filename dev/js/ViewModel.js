@@ -36,6 +36,7 @@ var vm = (function() {
 
     // Container for Wikipedia articles
     self.wikipediaArticles = ko.observableArray();
+    self.wikiPlaceInfo = ko.observableArray();
 
     self.nytData = undefined;
 
@@ -230,8 +231,7 @@ console.log("places-", places());
           marker = gm.getSelectedMarker();
           gm.populateInfowindow(marker.Marker);
           gm.toggleBounce(marker.Marker);
-          self.selectedMarkerTitle(marker.Marker.title);
-          self.userSelectedLocation(true);
+          self.showPlacesDetailRow(marker);
 
 //          self.userSelectedLocation(true);
         } else if (marker.Key == mrkr_id)
@@ -243,8 +243,7 @@ console.log("places-", places());
           gm.toggleBounce(marker.Marker);
           gm.closeInfoWindow();
           gm.clearSelectedMarker(mrkr_id);
-          self.selectedMarkerTitle(null);
-          self.userSelectedLocation(false);
+          self.hidePlacesDetailRow(marker);
         } else if (marker.Key != mrkr_id)
           // marker alaready selected and bouncing and infoWindow present.
           // Stop bouncing and close infoWindow
@@ -259,8 +258,7 @@ console.log("places-", places());
           marker = gm.getSelectedMarker();
           gm.toggleBounce(marker.Marker);
           gm.populateInfowindow(marker.Marker);
-          self.selectedMarkerTitle(marker.Marker.title);
-          self.userSelectedLocation(true);
+          showPlacesDetailRow(marker);
         } else
           // Some sort of error occurred or some unexpected/unplanned condition
           // occurred. Should never get here.
@@ -273,15 +271,13 @@ console.log("places-", places());
 
           // No selected marker.
           if (! marker) {
-            self.selectedMarkerTitle(null);
-            self.userSelectedLocation(false);
+            self.hidePlacesDetailRow(null);
           } else
           // Marker selected
           // Set observables,
           // Search sites for info on marker using title.
           {
-            self.selectedMarkerTitle(marker.title);
-            self.userSelectedLocation(true);
+            self.showPlacesDetailRow(marker);
           }
         }
 
@@ -360,11 +356,9 @@ console.log("places-", places());
 
       // Open the details view and show info
       if( state == open ) {
-        self.selectedMarkerTitle(marker.title);
-        self.userSelectedLocation(true);
+        showPlacesDetailRow(mrkr);
       } else if (state == close) {
-        self.selectedMarkerTitle(null);
-        self.userSelectedLocation(false);
+        hidePlacesDetailRow(mrkr);
       } else {
         // this should never happen
         assert(false);
@@ -374,11 +368,46 @@ console.log("places-", places());
       assert ('Key' in mrkr);
       assert (isValidState(state));
 
-      self.selectedMarkerTitle(null);
-      self.userSelectedLocation(false);
+      hidePlacesDetailRow(mrkr);
+    }
+    function callback_wikipediaPlaceDetailInfoDone(wikipediaD) {
+      self.wikiPlaceInfo.removeAll();
+
+      if ( wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0 ) {
+        self.noPlaceInfoData(false);
+        //Load the observablearray with relevant data.
+        for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
+          self.wikiPlaceInfo.push({title: wikipediaD.articles[1][i],
+          wikiWeb_url: wikipediaD.articles[3][i]});
+        }
+      } else {
+        self.noPlaceInfoData(true);
+      }
+
     }
     /**************************** End Callbacks **************************/
+    function showPlacesDetailRow(mrkr) {
+      assert(mrkr && mrkr.Marker);
 
+      // Retrieve wikipedia data
+      wiki.getWikipediaArticles(mrkr.Marker.title, callback_wikipediaPlaceDetailInfoDone);
+
+      self.selectedMarkerTitle(mrkr.Marker.title);
+      self.userSelectedLocation(true);
+    }
+
+    function hidePlacesDetailRow(mrkr) {
+      assert(mrkr && mrkr.Marker);
+
+      self.selectedMarkerTitle(null);
+      self.userSelectedLocation(false);
+
+      // Clean up wikipedia data
+    }
+
+    function retrieveWikipediaPlaceInfo(mrkr, callback_wikipediaPlaceDetailInfoDone) {
+      wiki.getWikipediaArticles
+    }
     // Expose public methods.
     return publicMethods; // return object containing public methods
 })();

@@ -55,8 +55,21 @@
     <!-- Information on selected marker/place -->
     <div class="row" data-bind="if: userSelectedLocation">
       <div class="col-lg-6 col-md-6 col-xs-12">
-        Wikipedia Articles: 
+        Wikipedia Articles:
         <span data-bind="text: selectedMarkerTitle"> </span>
+        <div data-bind="ifnot: noPlaceInfoData">
+          <ul data-bind="foreach: wikiPlaceInfo" id="wiki-place-article-list">
+            <li>
+                <!-- <span data-bind="text: title"> </span> -->
+              <a data-bind="attr: { href: wikiWeb_url}" >
+                <span data-bind="text: wikiPlaceTitle"> </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nodata" data-bind="if: noWikipediaData">
+          No articles returned from wikipedia.org.
+        </div>
       </div>
       <div class="col-lg-6 col-md-6 col-xs-12">
         <div> Yelp articles under development.</div>
@@ -90,7 +103,7 @@
               </li>
             </ul>
           </div>
-          <div data-bind="if: noWikipediaData">
+          <div class="nodata" data-bind="if: noWikipediaData">
             No articles returned from wikipedia.org.
           </div>
         </div>

@@ -187,23 +187,6 @@ var gm = (function() {
           } else {
             marker.setAnimation(google.maps.Animation.BOUNCE);
           }
-
-        // // If the selected marker is already animated, then stop animation.
-        // if (marker.getAnimation() !== null) {
-        //     marker.setAnimation(null);
-        //     _bouncingMarker = null;
-        // } else {
-        //     // stop a marker that is already bouncing.
-        //     if (_bouncingMarker) {
-        //         _bouncingMarker.setAnimation(null);
-        //         _bouncingMarker = null;
-        //     }
-        //     // Tell the marker to bounce.
-        //     marker.setAnimation(google.maps.Animation.BOUNCE);
-        //
-        //     // Remember which marker is bouncing.
-        //     _bouncingMarker = marker;
-        // }
     }
 
     /**
