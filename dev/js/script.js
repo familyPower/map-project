@@ -27,3 +27,7 @@ var placeClicked = function(ele) {
 
     vm.placeClicked(eId);
 }
+
+function filterChanged(value) {
+  vm.filterChanged(value);
+}

@@ -89,6 +89,19 @@ function findMarkerInArrayByMarker(array, marker) {
   return iRv;
 }
 
+function arrayContains(array, value) {
+  if (!array || array.length <= 0){
+    return false;
+  }
+
+  for (var i = 0, data; data = array[i]; i++) {
+    if (data == value) {
+      return true;
+    }
+  }
+
+  return false;
+}
 function isValidState(state) {
   return state == open || state == close;
 }

@@ -17,7 +17,7 @@ var vm = (function() {
 
     //
     self.noWikipediaData = ko.observable(false);
-
+    self.noPlaceInfoData = ko.observable(false);
     //
     self.userSelectedLocation = ko.observable(false);
 
@@ -34,9 +34,9 @@ var vm = (function() {
     // Container for news articles
     self.nytArticles = ko.observableArray();
 
-    // Container for Wikipedia articles
+    // Container for wikipediaInfopedia articles
     self.wikipediaArticles = ko.observableArray();
-    self.wikiPlaceInfo = ko.observableArray();
+    self.wikipediaPlaceInfo = ko.observableArray();
 
     self.nytData = undefined;
 
@@ -72,50 +72,14 @@ var vm = (function() {
             return;
         }
 
-        // // Retrieve the <ul> element that will hold the list of markers
-        // var $ulElement = $('#marker-list');
-        // var $ulChildren = $('#marker-list').children;
-        //
-        // for (var i = 0, marker; marker = markers[i]; i++) {
-        //     // Add the new Marker information
-        //     $ulElement.append('<li>' + marker.title + '</li>');
-        //     var $lastChild = $ulElement.children().last();
-        //
-        //     $lastChild.attr('id', "item-" + i);
-        //     $lastChild.attr('class', "marker-list-items");
-        //     $lastChild.data("item-marker", marker);
-        //
-        //     // var a = $lastChild.data("item-marker");
-        //     // var u1 = $lastChild.data("item-marker");
-        //
-        //     // Add click event to trigger actions like marker selected.
-        //     $lastChild.click(function() {
-        //         var mrkr = $(this).data('item-marker');
-        //         gm.populateInfowindow(mrkr);
-        //     });
-        //
-        //     var u = $('#marker-list:last-child').data('item-marker');
-        // }
-        // places.extend({
-        //     rateLimit: 50
-        // });
-console.log("count-before:", self.places().length);
         for (var i = 0, data; data = dataArray[i]; i++) {
-console.log("place:", data.PlaceName);
             var ulElement;
 
-            self.updateUIMarkers.push({
-                placeName: data.PlaceName,
-                idString: data.Key,
+            self.places.push({
+                PlaceName: data.PlaceName,
+                Key: data.Key,
             });
-            //            console.log("ulElement-", i, ulElement);
-            //            places.push(ulElement);
-
-console.log("self.places.length:", self.places.length);
         }
-console.log("count-after:", self.places().length);
-console.log("places-", places());
-        //places.sort():
     }
 
     // /****************************** Support Methods ***************************/
@@ -186,6 +150,11 @@ console.log("places-", places());
     /****************************** Public Methods *****************************/
     // container for public methods
     var publicMethods = {};
+
+    publicMethods.filterChanged = function(value) {
+        gm.filterMarkers(value);
+        self.updateUIMarkers();
+    }
 
     publicMethods.initialize = function() {
 
@@ -385,6 +354,7 @@ console.log("places-", places());
       }
 
     }
+
     /**************************** End Callbacks **************************/
     function showPlacesDetailRow(mrkr) {
       assert(mrkr && mrkr.Marker);

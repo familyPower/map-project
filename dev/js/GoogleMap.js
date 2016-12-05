@@ -80,12 +80,14 @@ var gm = (function() {
         var title;
         var key;
         for (var data, i = 0; i < _markers.length, data = _markers[i]; i++) {
+          if (true == data.Marker.visible) {
             title = data.Marker.title;
             key = data.Key;
             returnArray.push({
                 Key: key,
                 PlaceName: title
             });
+          }
         }
         return returnArray;
     }
@@ -283,7 +285,7 @@ var gm = (function() {
         service.nearbySearch({
             location: map.center,
             radius: 16000,
-            types: ['park', 'library', 'zoo', 'museum', 'aquarium']
+            types: ['park','library','zoo','museum','aquarium']
         }, processResults);
     }
 
@@ -341,7 +343,8 @@ var gm = (function() {
                 map: map,
                 icon: image,
                 title: place.name,
-                position: place.geometry.location
+                position: place.geometry.location,
+                category: place.types
             });
 
             // Create an onclick event to open an infowindow at each marker.
@@ -562,6 +565,32 @@ var gm = (function() {
         // notify UI
         callback_markerClicked(currentMarker, open);
       }
+    }
+
+
+    /**
+     * anonymous function - description
+     *
+     * @param  {type} category description
+     * @return {type}          description
+     * Credit: Peter @ jsfiddle: http://jsfiddle.net/peter/drytwvL8/
+     */
+    publicMethods.filterMarkers = function (category) {
+      assert(_markers);
+      var markers = _markers;
+
+        for (i = 0;  i < markers.length; i++) {
+          var marker = markers[i].Marker;
+
+            // If is same category or category not picked
+            if (category == "all" || category.length === 0 || arrayContains(marker.category, category)) {
+                marker.setVisible(true);
+            }
+            // Categories don't match
+            else {
+                marker.setVisible(false);
+            }
+        }
     }
 
     /**
