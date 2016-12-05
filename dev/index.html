@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Map Project</title>
-    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Map Project</title>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <div class="container">
 
     <!-- Location entry row: Enter search for Google Map -->
-    <div class="row">   <!-- first row -->
+    <div class="row">
+      <!-- first row -->
       <form data-bind="submit: updateAddress">
         <!-- filter string; sent to maps -->
         <div class="col-lg-1 col-md-1" id="filter-div">
           <button id="submit-btn" type="submit">Search</button>
         </div>
 
-        <div class = "col-lg-11 col-md-11">  <!-- row 1, column 2> -->
+        <div class="col-lg-11 col-md-11">
+          <!-- row 1, column 2> -->
           <input data-bind='value: address' type="text" id="filter-input" value="">
         </div>
       </form>
     </div>
 
     <!-- Filter row: Radio buttons to limit markers displaed in map. -->
-    <div class = "row">
-      <div class = "col-lg-12 col-md-12 col-xs-12">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-xs-12">
         <input id="showAll" class="radio-filters" type="radio" name="editList" value="all" onchange="filterChanged(this.value)" checked>
         <label for="showAll">Show All</label>
 
@@ -49,7 +53,7 @@
     </div>
 
     <!-- Header row: Information, Google Maps address, displayed to user. -->
-    <header class = "row">
+    <header class="row">
       <div class="col-lg-4 col-md-4 col-xs-12">
         <h4>Places of Interest</h4>
       </div>
@@ -60,20 +64,26 @@
 
     <!-- POI list and Map row -->
     <!-- list of items related to filter -->
-    <div class = "row">   <!-- row 2 -->
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" id="list-items">    <!-- row 2, col 1 -->
+    <div class="row">
+      <!-- row 2 -->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12" id="list-items">
+        <!-- row 2, col 1 -->
         <ul data-bind="foreach: places" id="marker-list">
           <li data-bind="attr: {id: Key}" class="marker-list-items" onclick="window.placeClicked(this)">
-          <span data-bind="text: PlaceName"> </span>
-        </li>
+            <span data-bind="text: PlaceName"> </span>
+          </li>
         </ul>
-      </div>    <!-- row 2, col 1 -->
+      </div>
+      <!-- row 2, col 1 -->
 
       <!-- The map -->
-      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">    <!-- row 2, col 2, map -->
+      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+        <!-- row 2, col 2, map -->
         <div id="map-canvas"></div>
-      </div>    <!-- row 2, col 2 -->
-    </div>    <!-- row 2 -->
+      </div>
+      <!-- row 2, col 2 -->
+    </div>
+    <!-- row 2 -->
 
     <!-- Detail Information on selected marker/place. Only visible when place selected -->
     <div class="row" data-bind="if: userSelectedLocation">
@@ -83,7 +93,7 @@
         <div data-bind="ifnot: noWikipediaPlaceData">
           <ul data-bind="foreach: wikipediaPlaceInfoArray" id="wiki-place-article-list">
             <li>
-              <a data-bind="attr: { href: wikiWeb_url}" >
+              <a data-bind="attr: { href: wikiWeb_url}">
                 <span data-bind="text: wikiPlaceTitle"> </span>
               </a>
             </li>
@@ -98,39 +108,41 @@
       </div>
     </div>
 
-      <!-- Related informations about addres found by googl maps.-->
-      <div class="row">
-        <div class="col-xs-6"  id="nyt-articles">  <!-- row 3, col 1>= -->
-          New York Times Articles
-          <ul data-bind="foreach: nytArticles" id="nyt-article-list">
-            <li>
+    <!-- Related informations about addres found by googl maps.-->
+    <div class="row">
+      <div class="col-xs-6" id="nyt-articles">
+        <!-- row 3, col 1>= -->
+        New York Times Articles
+        <ul data-bind="foreach: nytArticles" id="nyt-article-list">
+          <li>
             <a data-bind="attr: { href: web_url}" target="new">
+              <span data-bind="text: title"> </span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- Wikipedia articles about map address -->
+      <div class="col-xs-6" id="wiki-articles">
+        Wikipedia Articles
+        <div data-bind="ifnot: noWikipediaData">
+          <ul data-bind="foreach: wikipediaArticles" id="wikipedia-article-list">
+            <li>
+              <a data-bind="attr: { href: web_url}" target="new">
                 <span data-bind="text: title"> </span>
               </a>
             </li>
           </ul>
-
         </div>
-
-        <!-- Wikipedia articles about map address -->
-        <div class="col-xs-6" id="wiki-articles">
-          Wikipedia Articles
-          <div data-bind="ifnot: noWikipediaData">
-            <ul data-bind="foreach: wikipediaArticles" id="wikipedia-article-list">
-              <li>
-                <a data-bind="attr: { href: web_url}" target="new">
-                  <span data-bind="text: title"> </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div class="nodata" data-bind="if: noWikipediaData">
-            No articles returned from wikipedia.org.
-          </div>
+        <div class="nodata" data-bind="if: noWikipediaData">
+          No articles returned from wikipedia.org.
         </div>
       </div>
+    </div>
 
-  </div> <!-- container- -->
+  </div>
+  <!-- container- -->
 
   <!-- Javascript Libraries -->
   <script src="js/libs/jquery.min.js"></script>
@@ -147,8 +159,8 @@
 
   <!-- Run Google maps asyncronously - This presents some interesting and
   challenging problems. -->
-  <script async defer
-    src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&libraries=places"> //&callback=vm.initMap">
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&libraries=places">
+    //&callback=vm.initMap">
   </script>
 
   <noscript>
