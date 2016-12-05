@@ -1,4 +1,4 @@
-/**
+/** done.
  * Filename: GoogleMap.js
  * Purpose: This file interfaces with maps.google.com.
  * Internal Dependencies: None.
@@ -425,7 +425,7 @@ var gm = (function() {
      */
     function processResults(results, status, pagination) {
         if (status !== google.maps.places.PlacesServiceStatus.OK) {
-            console.log("Retrieve places failed with code: ", google.maps.places.PlacesServiceStatus)
+            alert("Retrieve places failed with code: ", google.maps.places.PlacesServiceStatus)
             return google.maps.places.PlacesServiceStatus;
         } else {
             // Remember the places

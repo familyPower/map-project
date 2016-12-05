@@ -46,7 +46,7 @@ var nyt = (function() {
             callback(_articles);
 
         }).fail(function() {
-            _articles = {
+            alert('NYT was not able to retrieve any articles.');            _articles = {
                 status: fail,
                 source: "New York Times",
                 articles: undefined

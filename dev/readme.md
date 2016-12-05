@@ -44,6 +44,7 @@ Note: If a location can't be found, the original location remains and the
         are retrieved from Wikipedia).
 *  6. Limit number of items in each list. Use scrollbars (see #1).
 *  7. Modify/add css to beautify/professionalize the ui.
+*  8. Make error handling more robust and informative.
 
 Known Issues:
   1. When user selects a POI and then clicks on a filter, the Infowindow doesn't

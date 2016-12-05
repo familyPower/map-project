@@ -66,6 +66,7 @@ var wiki = (function() {
                 clearTimeout(wikiRequestTimeout);
             }
         }).fail(function() {
+            alert('Wikipedia was not able to retrieve any articles.');
             _articles = {
                 status: fail,
                 source: "Wikipedia",
