@@ -1,4 +1,4 @@
-/**
+/** done
  * Filename: nytApi
  * Purpose: This file interfaces with the New York Times api.
  * Internal Dependencies: None.
@@ -18,49 +18,41 @@ var nyt = (function() {
      * getNYTArticles - description
      *
      * @param  {type} addressStreet The place to finds news articles about.
-     * @return {type}               description
+     * @return {type}               None.
+     * <p>
+     * This functions populates an array with the articles found. The array is
+     * passed to the callback function located in the ViewModel. A special
+     * entry is made into the articles array indicating the failure.
+     * </p>
      */
     publicMethods.getNYTArticles = function(addressStreet, callback) {
-        //  var $nytHeaderElem = $('#nytimes-header');
-        //  var $nytElem = $('#nytimes-articles');
         var nytimesUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' +
             addressStreet + '@sort=newest&api-key=fb149abdcc464fffa45ab3afef02a436';
 
         // clear out old data before new request
-        //  $nytElem.text("");
+        _articles = [];
+
         nytimesUrl = nytimesUrl.replace(' ', '+');
-        // console.log(nytimesUrl);
-        //  $.getJSON(nytimesUrl,processNYTData);
 
         $.getJSON(nytimesUrl, function(data) {
-                // console.log(data);
-                // $nytHeaderElem.text("New York Times Articles About " + addressStreet);
-                // console.log('here2');
-                _articles = {
-                    status: "ok",
-                    source: "New York Times",
-                    articles: data.response
-                };
-                callback(_articles);
-                //  for (var i = 0; i < articles.length; i++) {
-                //    var article = articles[i];
-                //    var strArticle = '<li class="article">'+'<a href="'+article.web_url+'">"'+article.headline.main+'</a>'+'<p>'+article.snippet+'</p>'+'</li>';
-                //    // console.log(strArticle);
-                //    $nytElem.append(strArticle);
-                //  }
-            }).fail(function() {
-                _articles = {
-                    status: fail,
-                    source: "New York Times",
-                    articles: undefined
-                };
-                callback(_articles);
-                // $nytHeaderElem.text("New York Times Articles Could Not Be Loaded for " + addressStreet);
-            })
-            // console.log('here');
+            // console.log(data);
+            // $nytHeaderElem.text("New York Times Articles About " + addressStreet);
+            // console.log('here2');
+            _articles = {
+                status: "ok",
+                source: "New York Times",
+                articles: data.response
+            };
+            callback(_articles);
 
-
-
+        }).fail(function() {
+            _articles = {
+                status: fail,
+                source: "New York Times",
+                articles: undefined
+            };
+            callback(_articles);
+        })
     }
 
     return publicMethods;
