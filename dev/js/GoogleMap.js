@@ -151,8 +151,19 @@ var gm = (function() {
     publicMethods.populateInfowindow = function(mrkr) {
             // Start the marker bouncing.
             //toggleBounce(marker);
-            var marker = ('Key' in mrkr) ? publicMethods.getSelectedMarker().Marker :
-                            mrkr;  //mrkr.Marker;
+            var marker;     // contains only GoogleMap information.
+            var theMarker;  // includes application specific information.
+
+            if ('Key' in mrkr) {
+              marker = mrkr.Marker;
+              theMarker = mrkr;
+            } else {
+              assert(mrkr.position.equals(publicMethods.getSelectedMarker().Marker.position));
+
+                marker = publicMethods.getSelectedMarker().Marker;
+                theMarker = publicMethods.getSelectedMarker();
+            }
+
             // Check to make sure the infowindow is not already opened on this marker.
             if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
                 largeInfowindow.marker = marker;
@@ -160,7 +171,7 @@ var gm = (function() {
                 largeInfowindow.open(map, marker);
                 // Make sure the marker property is cleared if the infowindow is closed.
                 largeInfowindow.addListener('closeclick', function() {
-                    infoWindowClosed(marker); // stop bouncing
+                    infoWindowClosed(theMarker); // stop bouncing
                     //        largeInfowindow.setMarker(null);
                     //toggleBounce(marker);
                 });

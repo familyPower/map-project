@@ -11,24 +11,23 @@
 
   <div class="container">
 
+    <!-- Location entry row: Enter search for Google Map -->
     <div class="row">   <!-- first row -->
-
       <form data-bind="submit: updateAddress">
         <!-- filter string; sent to maps -->
-        <div class="col-lg-1 col-md-1" id="filter-div">  <!-- row 1, col 1 -->
+        <div class="col-lg-1 col-md-1" id="filter-div">
           <button id="submit-btn" type="submit">Search</button>
-        </div>  <!-- row 1, col 1 -->
+        </div>
 
         <div class = "col-lg-11 col-md-11">  <!-- row 1, column 2> -->
           <input data-bind='value: address' type="text" id="filter-input" value="">
-        </div>    <!-- row 1, column 2> -->
+        </div>
       </form>
-    </div>    <!-- first row -->
+    </div>
 
-    <!-- Filter row -->
+    <!-- Filter row: Radio buttons to limit markers displaed in map. -->
     <div class = "row">
       <div class = "col-lg-12 col-md-12 col-xs-12">
-        <!-- 'park','library','zoo','museum','aquarium' -->
         <input id="showAll" class="radio-filters" type="radio" name="editList" value="all" onchange="filterChanged(this.value)" checked>
         <label for="showAll">Show All</label>
 
@@ -49,7 +48,7 @@
       </div>
     </div>
 
-    <!-- Header row -->
+    <!-- Header row: Information, Google Maps address, displayed to user. -->
     <header class = "row">
       <div class="col-lg-4 col-md-4 col-xs-12">
         <h4>Places of Interest</h4>
@@ -76,7 +75,7 @@
       </div>    <!-- row 2, col 2 -->
     </div>    <!-- row 2 -->
 
-    <!-- Detail Information on selected marker/place -->
+    <!-- Detail Information on selected marker/place. Only visible when place selected -->
     <div class="row" data-bind="if: userSelectedLocation">
       <div class="col-lg-6 col-md-6 col-xs-12">
         Wikipedia Articles:
@@ -84,7 +83,6 @@
         <div data-bind="ifnot: noWikipediaPlaceData">
           <ul data-bind="foreach: wikipediaPlaceInfoArray" id="wiki-place-article-list">
             <li>
-                <!-- <span data-bind="text: title"> </span> -->
               <a data-bind="attr: { href: wikiWeb_url}" >
                 <span data-bind="text: wikiPlaceTitle"> </span>
               </a>
@@ -100,13 +98,12 @@
       </div>
     </div>
 
-      <!-- Related informations -->
-      <div class="row">   <!-- row 3 -->
+      <!-- Related informations about addres found by googl maps.-->
+      <div class="row">
         <div class="col-xs-6"  id="nyt-articles">  <!-- row 3, col 1>= -->
           New York Times Articles
           <ul data-bind="foreach: nytArticles" id="nyt-article-list">
             <li>
-              <!-- <span data-bind="text: title"> </span> -->
             <a data-bind="attr: { href: web_url}" target="new">
                 <span data-bind="text: title"> </span>
               </a>
@@ -115,13 +112,13 @@
 
         </div>
 
-        <div class="col-xs-6" id="wiki-articles"> <!-- row 3, col 2 -->
+        <!-- Wikipedia articles about map address -->
+        <div class="col-xs-6" id="wiki-articles">
           Wikipedia Articles
           <div data-bind="ifnot: noWikipediaData">
             <ul data-bind="foreach: wikipediaArticles" id="wikipedia-article-list">
               <li>
-                <!-- <span data-bind="text: title"> </span> -->
-              <a data-bind="attr: { href: web_url}" target="new">
+                <a data-bind="attr: { href: web_url}" target="new">
                   <span data-bind="text: title"> </span>
                 </a>
               </li>
@@ -131,15 +128,16 @@
             No articles returned from wikipedia.org.
           </div>
         </div>
-      </div>    <!-- row 3 -->
+      </div>
 
   </div> <!-- container- -->
-  <!-- scripts -->
-  <!---->
+
+  <!-- Javascript Libraries -->
   <script src="js/libs/jquery.min.js"></script>
   <script src="js/libs/knockout.min.js"></script>
   <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
+  <!-- Program Files -->
   <script src="js/globals.js"></script>
   <script src="js/GoogleMap.js"></script>
   <script src="js/wikiApi.js"></script>
@@ -148,6 +146,8 @@
   <script src="js/ViewModel.js"></script>
   <script src="js/script.js"></script>
 
+  <!-- Run Google maps asyncronously - This presents some interesting and
+  challenging problems. -->
   <script async defer
     src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&libraries=places"> //&callback=vm.initMap">
   </script>
