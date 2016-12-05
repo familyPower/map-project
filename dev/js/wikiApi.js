@@ -1,5 +1,8 @@
 /**
- *
+ * @Filename: wikiApi.js.
+ * Purpose: This file interfaces with the Wikipedia api.
+ * Internal Dependencies: None.
+ * External Dependencies: http://en.wikipedia.org
  */
 
  var wiki = (function() {
@@ -11,16 +14,17 @@
              // container for Wikipedia articles
              var _articles;
 
-             publicMethods.getArticles = function() {
-
-             }
-
              /**
-              * getWikipediaArticles - description
+              * getWikipediaArticles - Calls the wikipedia api to search for
+              *     articles for address.
               *
-              * @param  {type} addressStreet description
-              * @param  {type} addressCity   description
-              * @return {type}               description
+              * @param  {type} addressStreet The information to search for, can
+              *               be any name or location.
+              * @return {type}               Returns an array of articles.
+              * <p>
+              *   If the api call fails, a special article is created indicating
+              *     the failure.
+              * </p>
               */
             publicMethods.getWikipediaArticles = function(addressStreet, callback) {
                // clear out old data before new request
