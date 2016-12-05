@@ -23,7 +23,7 @@ var placeClicked = function(ele) {
     var eId = ele.id;
 
     //assert(true === ele.hasAttribute('data-Item-Marker'), "placeClicked");
-    var mrkr_name = ele.getAttribute('data-Item-Marker');
+    //var mrkr_name = ele.getAttribute('data-Item-Marker');
 
     vm.placeClicked(eId);
 }

@@ -17,7 +17,7 @@ var vm = (function() {
 
     //
     self.noWikipediaData = ko.observable(false);
-    self.noPlaceInfoData = ko.observable(false);
+    self.noWikipediaPlaceData = ko.observable(false);
     //
     self.userSelectedLocation = ko.observable(false);
 
@@ -36,7 +36,7 @@ var vm = (function() {
 
     // Container for wikipediaInfopedia articles
     self.wikipediaArticles = ko.observableArray();
-    self.wikipediaPlaceInfo = ko.observableArray();
+    self.wikipediaPlaceInfoArray = ko.observableArray();
 
     self.nytData = undefined;
 
@@ -179,20 +179,9 @@ var vm = (function() {
         precondition(typeof mrkr_id == "string");
         assert(mrkr_id.trim().length > 0);
 
-        // var ndx = findInArray(self.places(), mrkr_id);
-        // if (ndx < 0) { // not found
-        //   // do something
-        // }
-        //
-        // assert(ndx < self.places().length);
-        //
-        // var m = data.Marker;
-        // var k = data.Key;
-
-        // start/stop bouncing
-
-        var marker = ! gm.getSelectedMarker() ? undefined :
-                          gm.getSelectedMarker();
+        var selectedMarker = gm.getSelectedMarker();
+        var marker = ! selectedMarker ? undefined :
+                          selectedMarker;
 
         // No markers currently selected.
         if ( ! marker /*&& gm.getSelectedMarker() === self._selectedMarker*/) {
@@ -200,9 +189,8 @@ var vm = (function() {
           marker = gm.getSelectedMarker();
           gm.populateInfowindow(marker.Marker);
           gm.toggleBounce(marker.Marker);
-          self.showPlacesDetailRow(marker);
+          showPlacesDetailRow(marker);
 
-//          self.userSelectedLocation(true);
         } else if (marker.Key == mrkr_id)
           // marker already selected and it's the same marker
           // stop bouncing,
@@ -212,7 +200,7 @@ var vm = (function() {
           gm.toggleBounce(marker.Marker);
           gm.closeInfoWindow();
           gm.clearSelectedMarker(mrkr_id);
-          self.hidePlacesDetailRow(marker);
+          hidePlacesDetailRow(marker);
         } else if (marker.Key != mrkr_id)
           // marker alaready selected and bouncing and infoWindow present.
           // Stop bouncing and close infoWindow
@@ -246,14 +234,9 @@ var vm = (function() {
           // Set observables,
           // Search sites for info on marker using title.
           {
-            self.showPlacesDetailRow(marker);
+            showPlacesDetailRow(marker);
           }
         }
-
-//        gm.placeSelected(mrkr_id);
-//        nytApi.getNYTArticles();
-
-        //"var mrkr = $(this).data('item-marker'); gm.populateInfowindow(mrkr);"
     }
     /**************************** End Public Methods **************************/
 
@@ -340,17 +323,17 @@ var vm = (function() {
       hidePlacesDetailRow(mrkr);
     }
     function callback_wikipediaPlaceDetailInfoDone(wikipediaD) {
-      self.wikiPlaceInfo.removeAll();
+      self.wikipediaPlaceInfoArray.removeAll();
 
       if ( wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0 ) {
-        self.noPlaceInfoData(false);
+        self.noWikipediaPlaceData(false);
         //Load the observablearray with relevant data.
         for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
-          self.wikiPlaceInfo.push({title: wikipediaD.articles[1][i],
+          self.wikipediaPlaceInfoArray.push({wikiPlaceTitle: wikipediaD.articles[1][i],
           wikiWeb_url: wikipediaD.articles[3][i]});
         }
       } else {
-        self.noPlaceInfoData(true);
+        self.noWikipediaPlaceData(true);
       }
 
     }
@@ -363,7 +346,7 @@ var vm = (function() {
       wiki.getWikipediaArticles(mrkr.Marker.title, callback_wikipediaPlaceDetailInfoDone);
 
       self.selectedMarkerTitle(mrkr.Marker.title);
-      self.userSelectedLocation(true);
+      self.userSelectedLocation(true);  //noWikipediaPlaceData
     }
 
     function hidePlacesDetailRow(mrkr) {
@@ -376,7 +359,9 @@ var vm = (function() {
     }
 
     function retrieveWikipediaPlaceInfo(mrkr, callback_wikipediaPlaceDetailInfoDone) {
-      wiki.getWikipediaArticles
+//      self.noWikipediaPlaceData(true);
+//      wikipediaPlaceInfoArray.push({wikiWeb_url:'www.home.com', wikiPlaceTitle:'title of place'})
+      //wiki.getWikipediaArticles();
     }
     // Expose public methods.
     return publicMethods; // return object containing public methods
