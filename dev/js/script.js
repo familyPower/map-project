@@ -60,5 +60,5 @@ var placeClicked = function(ele) {
  *          https://developers.google.com/places/supported_types
  */
 function filterChanged(value) {
-  vm.filterChanged(value);
+    vm.filterChanged(value);
 }

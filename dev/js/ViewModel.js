@@ -63,7 +63,7 @@ var vm = (function() {
     };
 
     self.updateUIMarkers = function() {
-      self.places.removeAll();
+        self.places.removeAll();
 
         var dataArray = gm.getMarkersData();
 
@@ -136,13 +136,13 @@ var vm = (function() {
      * @return {type}         description
      */
     function isMarker(element, index, array) {
-      var data = array[index];
+        var data = array[index];
 
-      if (data.Key == element) {
-        return array[index];
-      }
+        if (data.Key == element) {
+            return array[index];
+        }
 
-      return undefined;
+        return undefined;
     }
 
     /***************************End Support Methods ***************************/
@@ -163,107 +163,107 @@ var vm = (function() {
 
     function initMap() {
 
-      // Set callbacks. This is necessary because calls to google maps appear
-      // to be asynchronous.
-      g_callback_AddressFound = addressFound;
-      g_callback_AddressProcessed = addressProcessed;
-      gm.setBouncingCallback(bouncingStopedStarted);
-      gm.setInfoWindowClosedCallback(infoWindowClosed);
+        // Set callbacks. This is necessary because calls to google maps appear
+        // to be asynchronous.
+        g_callback_AddressFound = addressFound;
+        g_callback_AddressProcessed = addressProcessed;
+        gm.setBouncingCallback(bouncingStopedStarted);
+        gm.setInfoWindowClosedCallback(infoWindowClosed);
 
-      assert(self.address().length > 0);
-      //gm.updateMap(self.address());
-      return gm.initMap(DEFAULT_LOCATION);
+        assert(self.address().length > 0);
+        //gm.updateMap(self.address());
+        return gm.initMap(DEFAULT_LOCATION);
     }
 
     publicMethods.placeClicked = function(mrkr_id) {
-        precondition(typeof mrkr_id == "string");
-        assert(mrkr_id.trim().length > 0);
+            precondition(typeof mrkr_id == "string");
+            assert(mrkr_id.trim().length > 0);
 
-        var selectedMarker = gm.getSelectedMarker();
-        var marker = ! selectedMarker ? undefined :
-                          selectedMarker;
+            var selectedMarker = gm.getSelectedMarker();
+            var marker = !selectedMarker ? undefined :
+                selectedMarker;
 
-        // No markers currently selected.
-        if ( ! marker /*&& gm.getSelectedMarker() === self._selectedMarker*/) {
-          gm.setSelectedMarker(mrkr_id);
-          marker = gm.getSelectedMarker();
-          gm.populateInfowindow(marker.Marker);
-          gm.toggleBounce(marker.Marker);
-          showPlacesDetailRow(marker);
+            // No markers currently selected.
+            if (!marker /*&& gm.getSelectedMarker() === self._selectedMarker*/ ) {
+                gm.setSelectedMarker(mrkr_id);
+                marker = gm.getSelectedMarker();
+                gm.populateInfowindow(marker.Marker);
+                gm.toggleBounce(marker.Marker);
+                showPlacesDetailRow(marker);
 
-        } else if (marker.Key == mrkr_id)
-          // marker already selected and it's the same marker
-          // stop bouncing,
-          // clear infoWindow,
-          // clear selected marker
-        {
-          gm.toggleBounce(marker.Marker);
-          gm.closeInfoWindow();
-          gm.clearSelectedMarker(mrkr_id);
-          hidePlacesDetailRow(marker);
-        } else if (marker.Key != mrkr_id)
-          // marker alaready selected and bouncing and infoWindow present.
-          // Stop bouncing and close infoWindow
-          // selected marker
-          // Start bouncing
-          // Show inforwindo
-        {
-          gm.toggleBounce(marker);
-          gm.closeInfoWindow();
-          gm.setSelectedMarker(mrkr_id);
+            } else if (marker.Key == mrkr_id)
+            // marker already selected and it's the same marker
+            // stop bouncing,
+            // clear infoWindow,
+            // clear selected marker
+            {
+                gm.toggleBounce(marker.Marker);
+                gm.closeInfoWindow();
+                gm.clearSelectedMarker(mrkr_id);
+                hidePlacesDetailRow(marker);
+            } else if (marker.Key != mrkr_id)
+            // marker alaready selected and bouncing and infoWindow present.
+            // Stop bouncing and close infoWindow
+            // selected marker
+            // Start bouncing
+            // Show inforwindo
+            {
+                gm.toggleBounce(marker);
+                gm.closeInfoWindow();
+                gm.setSelectedMarker(mrkr_id);
 
-          marker = gm.getSelectedMarker();
-          gm.toggleBounce(marker.Marker);
-          gm.populateInfowindow(marker.Marker);
-          showPlacesDetailRow(marker);
-        } else
-          // Some sort of error occurred or some unexpected/unplanned condition
-          // occurred. Should never get here.
-        {
-          assert(false);
+                marker = gm.getSelectedMarker();
+                gm.toggleBounce(marker.Marker);
+                gm.populateInfowindow(marker.Marker);
+                showPlacesDetailRow(marker);
+            } else
+            // Some sort of error occurred or some unexpected/unplanned condition
+            // occurred. Should never get here.
+            {
+                assert(false);
+            }
+
+            function showHideMarkerLinks() {
+                var marker = gm.getSelectedMarker();
+
+                // No selected marker.
+                if (!marker) {
+                    self.hidePlacesDetailRow(null);
+                } else
+                // Marker selected
+                // Set observables,
+                // Search sites for info on marker using title.
+                {
+                    showPlacesDetailRow(marker);
+                }
+            }
         }
-
-        function showHideMarkerLinks() {
-          var marker = gm.getSelectedMarker();
-
-          // No selected marker.
-          if (! marker) {
-            self.hidePlacesDetailRow(null);
-          } else
-          // Marker selected
-          // Set observables,
-          // Search sites for info on marker using title.
-          {
-            showPlacesDetailRow(marker);
-          }
-        }
-    }
-    /**************************** End Public Methods **************************/
+        /**************************** End Public Methods **************************/
 
     /**************************** Callbacks **************************/
 
     function addressFound(formattedAddress) {
-      // Display the address found
-      self.formattedAddress(formattedAddress);
+        // Display the address found
+        self.formattedAddress(formattedAddress);
     }
 
     function addressProcessed() {
-      // Get the places represented by the markers.
-      var markers = gm.getMarkersData();
+        // Get the places represented by the markers.
+        var markers = gm.getMarkersData();
 
-      // Remove existing data from the observableArray of markers.
-      self.places.removeAll();
+        // Remove existing data from the observableArray of markers.
+        self.places.removeAll();
 
-      assert(0 == self.places.length);
+        assert(0 == self.places.length);
 
-      // Fill the observable array with new data.
-      for( var i = 0, marker; marker = markers[i], i < markers.length; i++) {
-        self.places.push(marker);
-      }
+        // Fill the observable array with new data.
+        for (var i = 0, marker; marker = markers[i], i < markers.length; i++) {
+            self.places.push(marker);
+        }
 
-      // Retrieve information for the address.
-      nyt.getNYTArticles(self.address(), nytArticlesFound);
-      wiki.getWikipediaArticles(self.address(), wikipediaArticlesFound);
+        // Retrieve information for the address.
+        nyt.getNYTArticles(self.address(), nytArticlesFound);
+        wiki.getWikipediaArticles(self.address(), wikipediaArticlesFound);
 
     }
 
@@ -276,92 +276,101 @@ var vm = (function() {
      * @TODO Modify code so that aged articles do not appear.
      */
     function nytArticlesFound(nytD) {
-      self.nytData = nytD;
-      self.nytArticles.removeAll();
-      for( var i = 0, item; item = nytD.articles.docs[i], i < nytD.articles.docs.length; i++) {
-        self.nytArticles.push({title: item.headline.main.split(";")[0],
-          web_url: item.web_url});
-      }
+        self.nytData = nytD;
+        self.nytArticles.removeAll();
+        for (var i = 0, item; item = nytD.articles.docs[i], i < nytD.articles.docs.length; i++) {
+            self.nytArticles.push({
+                title: item.headline.main.split(";")[0],
+                web_url: item.web_url
+            });
+        }
     }
 
     function wikipediaArticlesFound(wikipediaD) {
-      self.wikipediaArticles.removeAll();
+        self.wikipediaArticles.removeAll();
 
-      if ( wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0 ) {
-        self.noWikipediaData(false);
-        //Load the observablearray with relevant data.
-        for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
-          self.wikipediaArticles.push({title: wikipediaD.articles[1][i],
-          web_url: wikipediaD.articles[3][i]});
+        if (wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0) {
+            self.noWikipediaData(false);
+            //Load the observablearray with relevant data.
+            for (var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
+                self.wikipediaArticles.push({
+                    title: wikipediaD.articles[1][i],
+                    web_url: wikipediaD.articles[3][i]
+                });
+            }
+        } else {
+            self.noWikipediaData(true);
         }
-      } else {
-        self.noWikipediaData(true);
-      }
     }
+
     function bouncingStopedStarted(mrkr, state) {
-      assert(mrkr);
-      assert('Key' in mrkr);
-      assert(isValidState(state));
-      assert(mrkr.Marker);
+        assert(mrkr);
+        assert('Key' in mrkr);
+        assert(isValidState(state));
+        assert(mrkr.Marker);
 
-      var marker = mrkr.Marker;
+        var marker = mrkr.Marker;
 
-      // Open the details view and show info
-      if( state == open ) {
-        showPlacesDetailRow(mrkr);
-      } else if (state == close) {
-        hidePlacesDetailRow(mrkr);
-      } else {
-        // this should never happen
-        assert(false);
-      }
-    }
-    function infoWindowClosed(mrkr, state) {
-      assert ('Key' in mrkr);
-      assert (isValidState(state));
-
-      hidePlacesDetailRow(mrkr);
-    }
-    function callback_wikipediaPlaceDetailInfoDone(wikipediaD) {
-      self.wikipediaPlaceInfoArray.removeAll();
-
-      if ( wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0 ) {
-        self.noWikipediaPlaceData(false);
-        //Load the observablearray with relevant data.
-        for( var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
-          self.wikipediaPlaceInfoArray.push({wikiPlaceTitle: wikipediaD.articles[1][i],
-          wikiWeb_url: wikipediaD.articles[3][i]});
+        // Open the details view and show info
+        if (state == open) {
+            showPlacesDetailRow(mrkr);
+        } else if (state == close) {
+            hidePlacesDetailRow(mrkr);
+        } else {
+            // this should never happen
+            assert(false);
         }
-      } else {
-        self.noWikipediaPlaceData(true);
-      }
+    }
+
+    function infoWindowClosed(mrkr, state) {
+        assert('Key' in mrkr);
+        assert(isValidState(state));
+
+        hidePlacesDetailRow(mrkr);
+    }
+
+    function callback_wikipediaPlaceDetailInfoDone(wikipediaD) {
+        self.wikipediaPlaceInfoArray.removeAll();
+
+        if (wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0) {
+            self.noWikipediaPlaceData(false);
+            //Load the observablearray with relevant data.
+            for (var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
+                self.wikipediaPlaceInfoArray.push({
+                    wikiPlaceTitle: wikipediaD.articles[1][i],
+                    wikiWeb_url: wikipediaD.articles[3][i]
+                });
+            }
+        } else {
+            self.noWikipediaPlaceData(true);
+        }
 
     }
 
     /**************************** End Callbacks **************************/
     function showPlacesDetailRow(mrkr) {
-      assert(mrkr && mrkr.Marker);
+        assert(mrkr && mrkr.Marker);
 
-      // Retrieve wikipedia data
-      wiki.getWikipediaArticles(mrkr.Marker.title, callback_wikipediaPlaceDetailInfoDone);
+        // Retrieve wikipedia data
+        wiki.getWikipediaArticles(mrkr.Marker.title, callback_wikipediaPlaceDetailInfoDone);
 
-      self.selectedMarkerTitle(mrkr.Marker.title);
-      self.userSelectedLocation(true);  //noWikipediaPlaceData
+        self.selectedMarkerTitle(mrkr.Marker.title);
+        self.userSelectedLocation(true); //noWikipediaPlaceData
     }
 
     function hidePlacesDetailRow(mrkr) {
-      assert(mrkr && mrkr.Marker);
+        assert(mrkr && mrkr.Marker);
 
-      self.selectedMarkerTitle(null);
-      self.userSelectedLocation(false);
+        self.selectedMarkerTitle(null);
+        self.userSelectedLocation(false);
 
-      // Clean up wikipedia data
+        // Clean up wikipedia data
     }
 
     function retrieveWikipediaPlaceInfo(mrkr, callback_wikipediaPlaceDetailInfoDone) {
-//      self.noWikipediaPlaceData(true);
-//      wikipediaPlaceInfoArray.push({wikiWeb_url:'www.home.com', wikiPlaceTitle:'title of place'})
-      //wiki.getWikipediaArticles();
+        //      self.noWikipediaPlaceData(true);
+        //      wikipediaPlaceInfoArray.push({wikiWeb_url:'www.home.com', wikiPlaceTitle:'title of place'})
+        //wiki.getWikipediaArticles();
     }
     // Expose public methods.
     return publicMethods; // return object containing public methods

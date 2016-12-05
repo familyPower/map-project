@@ -35,12 +35,12 @@ function isValidLatLong(latLon) {
  *    to the same place.
  */
 function isEqualLatLng(loc1, loc2) {
-  var loc1Lat = loc1.lat();
-  var loc1Lng = loc1.lng();
-  var loc2Lat = loc2.lat();
-  var loc2Lng = loc2.lng();
+    var loc1Lat = loc1.lat();
+    var loc1Lng = loc1.lng();
+    var loc2Lat = loc2.lat();
+    var loc2Lng = loc2.lng();
 
-  return loc1.lat() == loc2.lat() && loc1.lng() == loc2.lng();
+    return loc1.lat() == loc2.lat() && loc1.lng() == loc2.lng();
 }
 
 
@@ -101,18 +101,18 @@ function postcondition(condition, message) {
  *
  */
 function findMarkerInArrayByKey(array, key) {
-  precondition(array.length > 0 && 'Key' in array[0]);
+    precondition(array.length > 0 && 'Key' in array[0]);
 
-  var bFound = false;
+    var bFound = false;
 
-  var iRv = -1; // not found
-  for( var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
-    if (key == data.Key) {
-      iRv = i;
-      bFound = true;
+    var iRv = -1; // not found
+    for (var data, i = 0; bFound == false || i < array.length, data = array[i]; i++) {
+        if (key == data.Key) {
+            iRv = i;
+            bFound = true;
+        }
     }
-  }
-  return iRv;
+    return iRv;
 }
 
 /**
@@ -129,24 +129,24 @@ function findMarkerInArrayByKey(array, key) {
  * @return {type}        The index of the found marker or -1 if not found.
  */
 function findMarkerInArrayByMarker(array, marker) {
-  precondition(array);
-  precondition(marker);
+    precondition(array);
+    precondition(marker);
 
-  assert(array.length > 0);
-  assert ('Key' in array[0] && 'Key' in marker);
+    assert(array.length > 0);
+    assert('Key' in array[0] && 'Key' in marker);
 
 
-  var bFound = false;
+    var bFound = false;
 
-  var iRv = -1; // not found
-  for( var data, i = 0; bFound == false && i < array.length, data = array[i]; i++) {
-    assert(array[i].Marker);
-    if (array[i].Marker.position.equals(marker.position)) {
-      iRv = i;
-      bFound = true;
+    var iRv = -1; // not found
+    for (var data, i = 0; bFound == false && i < array.length, data = array[i]; i++) {
+        assert(array[i].Marker);
+        if (array[i].Marker.position.equals(marker.position)) {
+            iRv = i;
+            bFound = true;
+        }
     }
-  }
-  return iRv;
+    return iRv;
 }
 
 
@@ -158,17 +158,17 @@ function findMarkerInArrayByMarker(array, marker) {
  * @return {type}       true iff the value is in the array, else false.
  */
 function arrayContains(array, value) {
-  if (!array || array.length <= 0){
-    return false;
-  }
-
-  for (var i = 0, data; data = array[i]; i++) {
-    if (data == value) {
-      return true;
+    if (!array || array.length <= 0) {
+        return false;
     }
-  }
 
-  return false;
+    for (var i = 0, data; data = array[i]; i++) {
+        if (data == value) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -179,5 +179,5 @@ function arrayContains(array, value) {
  * @return {type}       true if state is valid, else false.
  */
 function isValidState(state) {
-  return state == open || state == close;
+    return state == open || state == close;
 }
