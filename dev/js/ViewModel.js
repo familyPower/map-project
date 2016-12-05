@@ -82,51 +82,6 @@ var vm = (function() {
         }
     }
 
-    // /****************************** Support Methods ***************************/
-    // /**
-    //  * toggleBounce - description
-    //  *
-    //  * @param  {type} marker description
-    //  * @return {type}        description
-    //  * Assumptions           There several significant assumptions. first
-    //  *    only selected markers are bouncing.
-    //  *  2) Only one marker is bouncing at a time, this only one marker is ever
-    //  *      selected.
-    //  *  3) If no marker is bouncing, then nothing is selected.
-    //  *  4) If a marker or place is selected, then the marker will bounce.
-    //  *  5) If a second marker/place is selected when a marker is bouncing, then
-    //  *    the first marker will stop bouncing and the newly selected marker will
-    //  *    start bouncing.
-    //  */
-    // function toggleBounce(mkr) {
-    //   var marker = mkr;
-    //   //self.selectedMarkerTitle();
-    //     // If the marker.animation == drop, then set it to null
-    //
-    //     if (self._selectedMarker)
-    //     if (marker.getAnimation() == google.maps.Animation.Drop) {
-    //         marker.setAnimation(null);
-    //     }
-    //     // If the selected marker is already animated, then stop animation.
-    //     if (marker.getAnimation() !== null) {
-    //         marker.setAnimation(null);
-    //         _bouncingMarker = null;
-    //     } else {
-    //         // stop a marker that is already bouncing.
-    //         if (_bouncingMarker) {
-    //             _bouncingMarker.setAnimation(null);
-    //             _bouncingMarker = undefined;
-    //         }
-    //         // Tell the marker to bounce.
-    //         marker.setAnimation(google.maps.Animation.BOUNCE);
-    //
-    //         // Remember which marker is bouncing.
-    //         self._bouncingMarker = marker;
-    //         self.selectedMarkerTitle(_bouncingMarker.title);
-    //     }
-    // }
-    //
-
     /**
      * isMarker - description
      *

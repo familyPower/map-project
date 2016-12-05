@@ -7,16 +7,26 @@
  *
  */
 
+/**
+ * Globally defined callback functions.
+ * Note: There is no reason for these to be devied globally, consider moving
+ * them into gm.
+ *
+ */
 g_callback_AddressFound = undefined;
 g_callback_AddressProcessed = undefined;
 var gm = (function() {
     /*************************** Member Variables ***************************/
     var self = this;
 
+    /**
+     * Callback defined internally to gm. A publicMethods function is used to
+     * set them.
+     */
+    // TODO: add "_" to each private variable to indicate that it's private.
     var callback_markerClicked;
     var callback_infoWindowClosed;
 
-    // TODO: add "_" to each private variable
     // Public members - getters and setters available
     var _address = "sidney nsw";
     var locationLatlon;
@@ -39,16 +49,20 @@ var gm = (function() {
     /*************************** public methods ***************************/
 
     /**
-     * publicMethods - Sets the address if a valid string is passed in.
+     * publicMethods - Getter for address.
      *
-     *
-     * @param  {type} addr The new address.
-     * @return {string}    Returns the address.
+     * @return {type}  string
      */
     publicMethods.getAddress = function() {
         return self._address;
     }
 
+    /**
+     * publicMethods - Setter for address.
+     *
+     * @param  {type} addr String.
+     * @return {type}      None.
+     */
     publicMethods.setAddress = function(addr) {
         if (addr && addr.length > 0) {
             self._address = addr;
@@ -57,23 +71,12 @@ var gm = (function() {
         return self._address;
     }
 
-    publicMethods.isBouncing = function() {
-            return (publicMethods.getSelectedMarker().Marker.getAnimation() ==
-                google.maps.Animation.BOUNCE);
-        }
-        /**
-         * anonymous function - latlon
-         *
-         * @param  {type} latlon {lat: latitue, lgn: longitude}
-         * @return {type}        description
-         */
-    publicMethods.getLatlon = function(latlon) {
-        if (true === latlon) {
-            self.locationLatlon = latlon;
-        }
-        return self.locationLatlon;
-    }
-
+    /**
+     * getMarkersData - Takes the list of marker in _markers and puts them into
+     *    a custom object which is stored in an array.
+     *
+     * @return {type}  The array of markers with custome information.
+     */
     publicMethods.getMarkersData = function() {
         var returnArray = [];
         var title;
@@ -91,15 +94,10 @@ var gm = (function() {
         return returnArray;
     }
 
-    publicMethods.getPlacesArray = function() {
-        return self._places;
-    }
-
-    //
     /**
-     * anonymous function - description
+     * initMap - Initializes GoogleMap.
      *
-     * @return {type}  description
+     * @return {type}  None.
      */
     publicMethods.initMap = function(address) {
         // Constructor creates a new map - only center and zoom are required.
@@ -117,76 +115,92 @@ var gm = (function() {
         largeInfowindow = new google.maps.InfoWindow();
 
         publicMethods.updateMap(address);
-        // self._address = address;
-        // getPlaces();
-        //   addressToLatlng(address);
-        //      getPlaces();
     }
 
+    /**
+     * setBouncingCallback - Sets the callback to call when bouncing starts/
+     *      stops.
+     *
+     * @param  {type} callback The function to call.
+     * @return {type}          None.
+     */
     publicMethods.setBouncingCallback = function(callback) {
         precondition(callback);
 
         callback_markerClicked = callback; // bounce function
     }
+
+    /**
+     * setInfoWindowClosedCallback - Sets the function to call when the
+     *    Infowindow closes.
+     *
+     * @param  {type} callback The function to call.
+     * @return {type}          None.
+     */
     publicMethods.setInfoWindowClosedCallback = function(callback) {
         callback_infoWindowClosed = callback;
     }
+
+    /**
+     * updateMap - Updates the address of the center of the map.
+     *
+     * @param  {type} address The new address.
+     * @return {type}         None.
+     */
+
     publicMethods.updateMap = function(address) {
         var addr = publicMethods.setAddress(address);
         addressToLatlng(address);
     }
 
-    // publicMethods.getMapCenterAddress() {
-    //   return map.
-    // }
-    /*************************** private methods ***************************/
-
     /**
      * populateInfowindow - description
      *
-     * @param  {type} marker description
-     * @return {type}        description
+     * @param  {type} mrkr - A marker used to populate the Infowindow.
+     * @return {type}        None.
      */
     publicMethods.populateInfowindow = function(mrkr) {
-            // Start the marker bouncing.
-            //toggleBounce(marker);
-            var marker; // contains only GoogleMap information.
-            var theMarker; // includes application specific information.
+        var marker; // contains only GoogleMap information.
+        var theMarker; // includes application specific information.
 
-            if ('Key' in mrkr) {
-                marker = mrkr.Marker;
-                theMarker = mrkr;
-            } else {
-                assert(mrkr.position.equals(publicMethods.getSelectedMarker().Marker.position));
+        if ('Key' in mrkr) {
+            marker = mrkr.Marker;
+            theMarker = mrkr;
+        } else {
+            assert(mrkr.position.equals(publicMethods.getSelectedMarker().Marker.position));
 
-                marker = publicMethods.getSelectedMarker().Marker;
-                theMarker = publicMethods.getSelectedMarker();
-            }
-
-            // Check to make sure the infowindow is not already opened on this marker.
-            if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
-                largeInfowindow.marker = marker;
-                largeInfowindow.setContent('<div>' + marker.title + '</div>');
-                largeInfowindow.open(map, marker);
-                // Make sure the marker property is cleared if the infowindow is closed.
-                largeInfowindow.addListener('closeclick', function() {
-                    infoWindowClosed(theMarker); // stop bouncing
-                    //        largeInfowindow.setMarker(null);
-                    //toggleBounce(marker);
-                });
-            } // if
-        } // function: populateInfowindow
-
-    publicMethods.closeInfoWindow = function() {
-            largeInfowindow.close();
-            largeInfowindow.marker = null;
+            marker = publicMethods.getSelectedMarker().Marker;
+            theMarker = publicMethods.getSelectedMarker();
         }
-        /**
-         * toggleBounce - description
-         *
-         * @param  {type} marker description
-         * @return {type}        description
-         */
+
+        // Check to make sure the infowindow is not already opened on this marker.
+        if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
+            largeInfowindow.marker = marker;
+            largeInfowindow.setContent('<div>' + marker.title + '</div>');
+            largeInfowindow.open(map, marker);
+            // Make sure the marker property is cleared if the infowindow is closed.
+            largeInfowindow.addListener('closeclick', function() {
+                infoWindowClosed(theMarker);
+            });
+        }
+    }
+
+    /**
+     * closeInfoWindow - Closes the infowindow then ensures the state if set.
+     *
+     * @return {type}  None.
+     */
+    publicMethods.closeInfoWindow = function() {
+        largeInfowindow.close();
+        largeInfowindow.marker = null;
+    }
+
+    /**
+     * toggleBounce - toggleBounce
+     *
+     * @param  {type} mrkr The marker that shoule start/stop bouncing.
+     * @return {type}        None.
+     */
     publicMethods.toggleBounce = function(mrkr) {
         precondition(self._selectedMarker || mrkr);
 
@@ -202,9 +216,103 @@ var gm = (function() {
     }
 
     /**
-     * setMapStyles - description
+     * publicMethods - clearSelectedMarker: Clears the currently selected marker
+     *      to undefined. This indicates that no marker is selected.
      *
-     * @return {type}  description
+     * @return {type}  None
+     */
+    publicMethods.clearSelectedMarker = function() {
+        self._selectedMarker = undefined;
+    }
+
+    /**
+     * setSelectedMarker - Sets the marker the user clicked selected in the
+     *    POI list (left of map). Also sets the currently selected marker
+     *    variable. If the marker is not found (should never happen), the
+     *    currently selected marker variable is sete to undefined.
+     *
+     * @param  {type} key The key of the marker for the element clicked on.
+     * @return {type}     Returns the currently selected marker.
+     */
+    publicMethods.setSelectedMarker = function(key) {
+        assert(key.length > 0);
+        assert(typeof key == "string");
+
+        var ndx = findMarkerInArrayByKey(_markers, key);
+        if (ndx < 0) { // not found
+            // do something
+            self._selectedMarker = undefined;
+        } else {
+            self._selectedMarker = _markers[ndx];
+        }
+
+        return self._selectedMarker;
+    }
+
+    /**
+     * findMarkerFromMarker - findMarkerFromMarker: Searches to find a marker in the
+     *    array of markers given a marker to search for.
+     *
+     * @param  {type} mrkr The marker to find.
+     * @return {type}      The index of the desired marker or < 0 if marker
+     *        isn't found.
+     */
+    publicMethods.findMarkerFromMarker = function(mrkr) {
+        var ndx = findMarkerInArrayByMarker(_markers, mrkr);
+
+        if (ndx >= 0) {
+            return _markers[ndx];
+        }
+    }
+
+    /**
+     * getSelectedMarker - Returns the currently selected marker.
+     *
+     * @return {type}  Marker.
+     */
+    publicMethods.getSelectedMarker = function() {
+        return self._selectedMarker ? self._selectedMarker : undefined;
+    }
+
+    /**
+     * filterMarkers - Sets to visible all marker that meet the filter type. All
+     *      other markers are made invisible.
+     *
+     * @param  {type} category The GoogleMaps category type.
+     * @return {type}          None.
+     * <p>
+     * Postcondition: The visibility state of each marker is set according to
+     *    whether or not the marker is of the correct type.
+     * </p>
+     * Credit: Peter @ jsfiddle: http://jsfiddle.net/peter/drytwvL8/
+     */
+    publicMethods.filterMarkers = function(category) {
+        assert(_markers);
+        var markers = _markers;
+
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i].Marker;
+
+            // If is same category or category not picked
+            if (category == "all" || category.length === 0 || arrayContains(marker.category, category)) {
+                marker.setVisible(true);
+            }
+            // Categories don't match
+            else {
+                marker.setVisible(false);
+            }
+        }
+    }
+
+
+    /*************************** private methods ***************************/
+
+    /**
+     * setMapStyles - Sets the styles of the map.
+     * @return {type}  None.
+     * <p>
+     * TODO: Consider making map styles variable so that user can set the style.
+     * </p>
      */
     var setMapStyles = function() {
         smapStyles = [{
@@ -288,6 +396,13 @@ var gm = (function() {
         return mapStyles;
     }
 
+    /**
+     * getPlaces - Calls the GoogleMaps api to get a list of places. Gets the
+     *    location from the center of the map, which should be the closest
+     *    location matching the criteria entered by the user.
+     *
+     * @return {type}  None.
+     */
     function getPlaces() {
         var service = new google.maps.places.PlacesService(map);
 
@@ -299,6 +414,15 @@ var gm = (function() {
         }, processResults);
     }
 
+    /**
+     * processResults - Processes the results from the call to GoogleMaps
+     *    PlacesService api. Calls a callback to inform UI of new markers.
+     *
+     * @param  {type} results    The results found by the search.
+     * @param  {type} status     Success or Faile
+     * @param  {type} pagination The number of pages in results.
+     * @return {type}            None.
+     */
     function processResults(results, status, pagination) {
         if (status !== google.maps.places.PlacesServiceStatus.OK) {
             console.log("Retrieve places failed with code: ", google.maps.places.PlacesServiceStatus)
@@ -307,34 +431,31 @@ var gm = (function() {
             // Remember the places
             Array.prototype.push.apply(self._places, results); // results == places
 
+            // Create the markers.
             createMarkers(results);
 
+            // Notify UI of new markers.
             g_callback_AddressProcessed();
 
-            // if (pagination.hasNextPage) {
-            //   var moreButton = document.getElementById('more');
-            //
-            //   moreButton.disabled = false;
-            //
-            //   moreButton.addEventListener('click', function() {
-            //     moreButton.disabled = true;
-            //     pagination.nextPage();
-            //   });
-            // }
-            //
+            // Are there more pages?
             if (pagination.hasNextPage) {
                 pagination.nextPage();
             }
         }
     }
 
+    /**
+     * createMarkers - Creates the markers from the places found.
+     *
+     * @return {type}  None.
+     */
     function createMarkers() {
+        // assumes that places will always be found. ummm?
+        precondition(self._places && self._places.length > 0);
+
         clearMarkers();
 
         var bounds = new google.maps.LatLngBounds();
-
-        // TODO: remove ui code
-        //var placesList = document.getElementById('list-items');
 
         // The following group uses the location array to create an array of markers
         // on initialize.
@@ -359,11 +480,7 @@ var gm = (function() {
 
             // Create an onclick event to open an infowindow at each marker.
             marker.addListener('click', function() {
-                // todo: set the variable to remember which marker was clicked
-                // publicMethods.populateInfowindow(this);
-                // publicMethods.toggleBounce();
                 markerClicked(this); // toggle bounce
-                //toggleBounce(this);
             });
 
             // push the marker to out array of _markers.
@@ -377,26 +494,15 @@ var gm = (function() {
         }
         map.fitBounds(bounds);
 
-        //g_callback();
+        // !!! Big assumption here!! There may not be any places and thus no
+        // markers to create.
+        Postcondition(_markers && _markers.length > 0);
     }
 
     /**
-     * makeMarkerKey - description
+     * addressToLatlng - Sets the center of the map to the new address.
      *
-     * @param  {type} title description
-     * @return {type}       description
-     */
-    function makeMarkerKey(title) {
-        assert(title.length > 0);
-        assert(typeof title == 'string');
-
-        var sRv = title.repace(" ", "+");
-    }
-
-    /**
-     * addressToLatlng - description
-     *
-     * @return {type}  description
+     * @return {type}  None.
      */
     function addressToLatlng() {
         // address = "sidney nsw";
@@ -406,9 +512,6 @@ var gm = (function() {
         var geoResults;
         var geocoder = new google.maps.Geocoder();
 
-        // if (address == '') {
-        //   window.alert('You must enter an area, or address.');
-        // } else {
         // Geocode the address/area entered to get the center.
         geocoder.geocode({
             address: self._address
@@ -423,92 +526,20 @@ var gm = (function() {
                 getPlaces();
                 g_callback_AddressFound(results[0].formatted_address);
             } else {
-                // TODO: Error handler here; should display a message and do
+                // TODO: Better Error handler here; should display a message and do
                 // something reasonable, remain on current map or show world map
                 alert('Geocode was not successful for the following reason: ' + status);
             }
         });
-        // }
-        // Get POI
-        // getPlaces();
-
-        // return {status: geoLocStatus, location: loc};
-    } //  addressToLatlng
-
-    publicMethods.clearSelectedMarker = function() {
-        self._selectedMarker = undefined;
-    }
-
-    publicMethods.setSelectedMarker = function(key) {
-        assert(key.length > 0);
-        assert(typeof key == "string");
-
-        var ndx = findMarkerInArrayByKey(_markers, key);
-        if (ndx < 0) { // not found
-            // do something
-            self._selectedMarker = undefined;
-        } else {
-            self._selectedMarker = _markers[ndx];
-        }
-
-        return self._selectedMarker;
-    }
-
-    publicMethods.findMarkerFromMarker = function(mrkr) {
-        var ndx = findMarkerInArrayByMarker(_markers, mrkr);
-
-        if (ndx >= 0) {
-            return _markers[ndx];
-        }
-    }
-
-    function setSelectedMarkerByMarker(marker) {
-        var ndx = findMarkerInArrayByMarker(_markers, marker);
-        if (ndx < 0) { // not found
-            // do something
-        } else {
-            self._selectedMarker = _markers[ndx];
-        }
-
-        return self._selectedMarker;
-    }
-
-    publicMethods.getSelectedMarker = function() {
-        return self._selectedMarker ? self._selectedMarker : undefined;
     }
 
     /**
-     * placeSelected - description
+     * markerClicked - Sets application state based the the current state of
+     *    application and the action (which marker the user clicked) of the
+     *    user. See comments for details.
      *
-     * @param  {type} d description
-     * @return {type}   description
-     */
-    publicMethods.placeSelected = function(marker_key) {
-        assert(marker_key == self._selectedMarker.Key);
-        assert(self._selectedMarker);
-        //var marker = d.getAttribute("data-id");
-
-        // var ndx = findInArray(_markers, key);
-        // if (ndx < 0) {  // not found
-        //   // do something
-        // }
-        //
-        // var data = _markers[ndx];
-        // assert(data);
-        publicMethods.populateInfowindow(self._selectedMarker.Marker);
-    }
-
-    // support methods
-    function clearMarkers() {
-        _markers.length = 0;
-    }
-
-
-    /**
-     * markerClicked - description
-     *
-     * @param  {type} marker description
-     * @return {type}        description
+     * @param  {type} marker The marker the user clicked on.
+     * @return {type}        None.
      */
     function markerClicked(marker) {
         var currentMarker = self._selectedMarker;
@@ -576,37 +607,13 @@ var gm = (function() {
         }
     }
 
-
     /**
-     * anonymous function - description
+     * infoWindowClosed - Sets application state when user closes the
+     *    infoWindow. This is a callback method assigned when the infoWindow is
+     *    created.
      *
-     * @param  {type} category description
-     * @return {type}          description
-     * Credit: Peter @ jsfiddle: http://jsfiddle.net/peter/drytwvL8/
-     */
-    publicMethods.filterMarkers = function(category) {
-        assert(_markers);
-        var markers = _markers;
-
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i].Marker;
-
-            // If is same category or category not picked
-            if (category == "all" || category.length === 0 || arrayContains(marker.category, category)) {
-                marker.setVisible(true);
-            }
-            // Categories don't match
-            else {
-                marker.setVisible(false);
-            }
-        }
-    }
-
-    /**
-     * infoWindowClosed - description
-     *
-     * @param  {type} marker description
-     * @return {type}        description
+     * @param  {type} marker The marker associated with the infoWindow.
+     * @return {type}        None.
      *
      */
     function infoWindowClosed(marker) {
@@ -619,6 +626,22 @@ var gm = (function() {
         // notify UI
         callback_infoWindowClosed(marker, close);
     }
+
+
+    /**
+     * clearMarkers - Empties the markers array.
+     *
+     * @return {type}  None.
+     */
+    function clearMarkers() {
+        _markers.length = 0;
+
+        // ensure array continues to exist.
+        assert(_markers);
+
+        postcondition(_markers.legth > 0);
+    }
+
 
     // return object containing public methods
     return publicMethods;
