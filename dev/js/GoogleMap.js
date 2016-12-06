@@ -496,7 +496,7 @@ var gm = (function() {
 
         // !!! Big assumption here!! There may not be any places and thus no
         // markers to create.
-        Postcondition(_markers && _markers.length > 0);
+        postcondition(_markers && _markers.length > 0);
     }
 
     /**
@@ -639,7 +639,7 @@ var gm = (function() {
         // ensure array continues to exist.
         assert(_markers);
 
-        postcondition(_markers.legth > 0);
+        postcondition(_markers.length == 0);
     }
 
 
