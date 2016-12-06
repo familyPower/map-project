@@ -133,7 +133,7 @@ function findMarkerInArrayByMarker(array, marker) {
     precondition(marker);
 
     assert(array.length > 0);
-    assert('Key' in array[0] && 'Key' in marker);
+    assert('Key' in array[0] && !('Key' in marker));
 
 
     var bFound = false;
