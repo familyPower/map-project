@@ -1,6 +1,7 @@
 /**
+ * @Filename: ViewModel.js
  * Purpose: Acts as an interface to the model and provides data to the view.
- * Internal Dependencies: Model.js
+ * Internal Dependencies: wikiApi.js, GogleMap.js, nytApi.js
  * External Dependencies: None.
  */
 
@@ -11,8 +12,6 @@ var vm = (function() {
     var DEFAULT_LOCATION = "Empire State Building";
 
     /***************************** Knockout Bindings **************************/
-    // Keeps
-    var _bouncingMarker;
     self.selectedMarkerTitle = ko.observable();
 
     //
@@ -38,30 +37,34 @@ var vm = (function() {
     self.wikipediaArticles = ko.observableArray();
     self.wikipediaPlaceInfoArray = ko.observableArray();
 
-    self.nytData = undefined;
-
     // holds articles from the New York Times
     self._articlesNYT = ko.observableArray();
 
+    self.nytData = undefined;
+    var _bouncingMarker;
+
     // Submit button clicked.
+
+    /**
+     * updateAddress - Called my the view to notify that the user changed
+     *    the location of the center of the map. Calls GoogleMaps to notify
+     *    api of the change.
+     *
+     * @return {type}  None.
+     */
     self.updateAddress = function() {
         // Get and save the new address to center map on.
         var newAddress = self.address();
 
         // set the new address and update the map.
         gm.updateMap(newAddress, updateUIMarkers);
-
-        //g_callback = self.updateUIMarkers;
-        // // update the map with the new address.
-        // gm.updateMap(newAddress);
-
-        // Update the places found for address
-        //var plcs = gm.getPlaces();
-
-        // Update UI with markers
-        //self.updateUIMarkers();
     };
 
+    /**
+     * updateUIMarkers - Updates the UI markers.
+     *
+     * @return {type}  None.
+     */
     self.updateUIMarkers = function() {
         self.places.removeAll();
 
@@ -82,40 +85,40 @@ var vm = (function() {
         }
     }
 
-    /**
-     * isMarker - description
-     *
-     * @param  {type} element The current element being processed in the array.
-     * @param  {type} index   The index of the current element being processed in the array.
-     * @param  {type} array   The array find was called upon.
-     * @return {type}         description
-     */
-    function isMarker(element, index, array) {
-        var data = array[index];
-
-        if (data.Key == element) {
-            return array[index];
-        }
-
-        return undefined;
-    }
-
     /***************************End Support Methods ***************************/
 
     /****************************** Public Methods *****************************/
     // container for public methods
     var publicMethods = {};
 
+    /**
+     * filterChanged - Notified by UI that the user selected a different filter.
+     *    Updates application state to reflect changes.
+     *
+     * @param  {type} value The value of the selected filter. Should match
+     *                      GoogleMaps type values.
+     * @return {type}       None.
+     */
     publicMethods.filterChanged = function(value) {
         gm.filterMarkers(value);
         self.updateUIMarkers();
     }
 
+    /**
+     * initialize - Called by UI to initialize application and apis.
+     *
+     * @return {type}  None.
+     */
     publicMethods.initialize = function() {
 
         return initMap();
     }
 
+    /**
+     * initMap - Initializes GoogleMap.js including assigning callbacks.
+     *
+     * @return {type}  None.
+     */
     function initMap() {
 
         // Set callbacks. This is necessary because calls to google maps appear
@@ -126,82 +129,88 @@ var vm = (function() {
         gm.setInfoWindowClosedCallback(infoWindowClosed);
 
         assert(self.address().length > 0);
-        //gm.updateMap(self.address());
+
         return gm.initMap(DEFAULT_LOCATION);
     }
 
+    /**
+     * placeClicked - Notified that user selected a place from the list.
+     *      See code for additional comments.
+     * @param  {type} mrkr_id The key identifying the marker, also element id.
+     * @return {type}         None.
+     */
     publicMethods.placeClicked = function(mrkr_id) {
-            precondition(typeof mrkr_id == "string");
-            assert(mrkr_id.trim().length > 0);
+        precondition(typeof mrkr_id == "string");
+        assert(mrkr_id.trim().length > 0);
 
-            var selectedMarker = gm.getSelectedMarker();
-            var marker = !selectedMarker ? undefined :
-                selectedMarker;
+        var selectedMarker = gm.getSelectedMarker();
+        var marker = !selectedMarker ? undefined :
+            selectedMarker;
 
-            // No markers currently selected.
-            if (!marker /*&& gm.getSelectedMarker() === self._selectedMarker*/ ) {
-                gm.setSelectedMarker(mrkr_id);
-                marker = gm.getSelectedMarker();
-                gm.populateInfowindow(marker.Marker);
-                gm.toggleBounce(marker.Marker);
-                showPlacesDetailRow(marker);
+        // No markers currently selected.
+        if (!marker /*&& gm.getSelectedMarker() === self._selectedMarker*/ ) {
+            gm.setSelectedMarker(mrkr_id);
+            marker = gm.getSelectedMarker();
+            gm.populateInfowindow(marker.Marker);
+            gm.toggleBounce(marker.Marker);
+            showPlacesDetailRow(marker);
 
-            } else if (marker.Key == mrkr_id)
-            // marker already selected and it's the same marker
-            // stop bouncing,
-            // clear infoWindow,
-            // clear selected marker
-            {
-                gm.toggleBounce(marker.Marker);
-                gm.closeInfoWindow();
-                gm.clearSelectedMarker(mrkr_id);
-                hidePlacesDetailRow(marker);
-            } else if (marker.Key != mrkr_id)
-            // marker alaready selected and bouncing and infoWindow present.
-            // Stop bouncing and close infoWindow
-            // selected marker
-            // Start bouncing
-            // Show inforwindo
-            {
-                gm.toggleBounce(marker);
-                gm.closeInfoWindow();
-                gm.setSelectedMarker(mrkr_id);
+        } else if (marker.Key == mrkr_id)
+        // marker already selected and it's the same marker
+        // stop bouncing,
+        // clear infoWindow,
+        // clear selected marker
+        {
+            gm.toggleBounce(marker.Marker);
+            gm.closeInfoWindow();
+            gm.clearSelectedMarker(mrkr_id);
+            hidePlacesDetailRow(marker);
+        } else if (marker.Key != mrkr_id)
+        // marker alaready selected and bouncing and infoWindow present.
+        // Stop bouncing and close infoWindow
+        // selected marker
+        // Start bouncing
+        // Show inforwindo
+        {
+            gm.toggleBounce(marker);
+            gm.closeInfoWindow();
+            gm.setSelectedMarker(mrkr_id);
 
-                marker = gm.getSelectedMarker();
-                gm.toggleBounce(marker.Marker);
-                gm.populateInfowindow(marker.Marker);
-                showPlacesDetailRow(marker);
-            } else
-            // Some sort of error occurred or some unexpected/unplanned condition
-            // occurred. Should never get here.
-            {
-                assert(false);
-            }
-
-            function showHideMarkerLinks() {
-                var marker = gm.getSelectedMarker();
-
-                // No selected marker.
-                if (!marker) {
-                    self.hidePlacesDetailRow(null);
-                } else
-                // Marker selected
-                // Set observables,
-                // Search sites for info on marker using title.
-                {
-                    showPlacesDetailRow(marker);
-                }
-            }
+            marker = gm.getSelectedMarker();
+            gm.toggleBounce(marker.Marker);
+            gm.populateInfowindow(marker.Marker);
+            showPlacesDetailRow(marker);
+        } else
+        // Some sort of error occurred or some unexpected/unplanned condition
+        // occurred. Should never get here.
+        {
+            assert(false);
         }
-        /**************************** End Public Methods **************************/
+    }
+
+    /**************************** End Public Methods **************************/
 
     /**************************** Callbacks **************************/
 
+    /**
+     * addressFound - callback function to notify ViewModel that GoogleMap
+     *    found an address.
+     *
+     * @param  {type} formattedAddress description
+     * @return {type}                  description
+     */
     function addressFound(formattedAddress) {
         // Display the address found
         self.formattedAddress(formattedAddress);
     }
 
+    /**
+     * addressProcessed - Called when GoogleMaps finishes processing an
+     *    address. This function handles updating the ViewModel's state and
+     *    requesting NYT and wikipedia articles for the address.
+     *
+     * @return {type}  None.
+     */
     function addressProcessed() {
         // Get the places represented by the markers.
         var markers = gm.getMarkersData();
@@ -223,7 +232,9 @@ var vm = (function() {
     }
 
     /**
-     * nytArticlesFound - description
+     * nytArticlesFound - This function is called by the New York Times api
+     *  after it completes the request. This function processes the data sent
+     *  by the NYT api and sets the knockout variables so the ui is updated.
      *
      * @param  {type} nytD The results from calling the NYT web service.
      * @return {type}      None
@@ -241,6 +252,15 @@ var vm = (function() {
         }
     }
 
+    /**
+     * wikipediaArticlesFound - This function is called by the Wikipedia api
+     *  after it finishes processing a request for articles. This function
+     * processes the data sent by the api and sets the knockout variables
+     * so the ui is updated.
+     *
+     * @param  {type} wikipediaD The wikipedia data
+     * @return {type}            None.
+     */
     function wikipediaArticlesFound(wikipediaD) {
         self.wikipediaArticles.removeAll();
 
@@ -258,6 +278,20 @@ var vm = (function() {
         }
     }
 
+
+    /**
+     * bouncingStopedStarted - Indicates a marker that has started or stopped
+     *    bouncing. The marker details pane is opened or closed based on the
+     *    of state. If state is open, marker is bouncing, then the marker
+     *    detail pane is visible. If the state is close, marker is not bouncing
+     *    then the marker detail pane is made invisible. This function is called
+     *    by both the ViewModel and GoogleMap.js files since the marker's
+     *    animation state can be changed in both locations.
+     *
+     * @param  {type} mrkr  The marker that stopped / started bouncing.
+     * @param  {type} state What should the state of the marker detail pane be?
+     * @return {type}       None.
+     */
     function bouncingStopedStarted(mrkr, state) {
         assert(mrkr);
         assert('Key' in mrkr);
@@ -277,6 +311,14 @@ var vm = (function() {
         }
     }
 
+    /**
+     * infoWindowClosed - A callback function that notifies the ViewModel that
+     *    the InfoWindow closed.
+     *
+     * @param  {type} mrkr  The marker belonging to the infowindow.
+     * @param  {type} state The state of the marker (open, close).
+     * @return {type}       description
+     */
     function infoWindowClosed(mrkr, state) {
         assert('Key' in mrkr);
         assert(isValidState(state));
@@ -284,10 +326,21 @@ var vm = (function() {
         hidePlacesDetailRow(mrkr);
     }
 
+    /**
+     * callback_wikipediaPlaceDetailInfoDone - This callback function is called
+     *    by the wikipedia api after it finishes retrieving articles for the
+     *    marker detail pane.
+     *
+     * @param  {type} wikipediaD
+     *
+     * @return {type}            description
+     */
     function callback_wikipediaPlaceDetailInfoDone(wikipediaD) {
         self.wikipediaPlaceInfoArray.removeAll();
 
+        // Is there data to process?
         if (wikipediaD && wikipediaD.articles && wikipediaD.articles.length > 0) {
+            // Notify UI that there is data.
             self.noWikipediaPlaceData(false);
             //Load the observablearray with relevant data.
             for (var i = 0, item; item = wikipediaD.articles[i], i < wikipediaD.articles.length; i++) {
@@ -297,36 +350,52 @@ var vm = (function() {
                 });
             }
         } else {
+            // Notify UI that there is no data for the detail pane.
             self.noWikipediaPlaceData(true);
         }
 
     }
 
     /**************************** End Callbacks **************************/
+
+    /**
+     * showPlacesDetailRow - Makes the marker detail pane visible and requests
+     *    data to populate the marker detail pane.
+     *
+     * @param  {type} mrkr The marker for which articles are needed.
+     * @return {type}      None.
+     */
     function showPlacesDetailRow(mrkr) {
         assert(mrkr && mrkr.Marker);
 
         // Retrieve wikipedia data
         wiki.getWikipediaArticles(mrkr.Marker.title, callback_wikipediaPlaceDetailInfoDone);
 
+        // Update the UI with the marker title.
         self.selectedMarkerTitle(mrkr.Marker.title);
+
+        // Show the marker detail pane.
         self.userSelectedLocation(true); //noWikipediaPlaceData
     }
 
+    /**
+     * hidePlacesDetailRow - Cleans up and makes the marker detail pane invisible.
+     *
+     * @param  {type} mrkr description
+     * @return {type}      description
+     */
     function hidePlacesDetailRow(mrkr) {
         assert(mrkr && mrkr.Marker);
 
+        // Remove the marker title.
         self.selectedMarkerTitle(null);
+
+        // Hide the marker detail pane.
         self.userSelectedLocation(false);
 
         // Clean up wikipedia data
     }
 
-    function retrieveWikipediaPlaceInfo(mrkr, callback_wikipediaPlaceDetailInfoDone) {
-        //      self.noWikipediaPlaceData(true);
-        //      wikipediaPlaceInfoArray.push({wikiWeb_url:'www.home.com', wikiPlaceTitle:'title of place'})
-        //wiki.getWikipediaArticles();
-    }
     // Expose public methods.
     return publicMethods; // return object containing public methods
 })();
