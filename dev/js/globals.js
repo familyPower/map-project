@@ -29,10 +29,10 @@ function isValidLatLong(latLon) {
 /**
  * isEqualLatLng - description
  *
- * @param  {type} loc1 description
- * @param  {type} loc2 description
+ * @param  {type} loc1 A GoogleMaps Position object.
+ * @param  {type} loc2 A second GoogleMaps Position object.
  * @return {boolean}   Returns true if the two locations point
- *    to the same place.
+ *    to the same latitude and longitude.
  */
 function isEqualLatLng(loc1, loc2) {
     var loc1Lat = loc1.lat();
