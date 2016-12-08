@@ -35,9 +35,6 @@ var nyt = (function() {
         nytimesUrl = nytimesUrl.replace(' ', '+');
 
         $.getJSON(nytimesUrl, function(data) {
-            // console.log(data);
-            // $nytHeaderElem.text("New York Times Articles About " + addressStreet);
-            // console.log('here2');
             _articles = {
                 status: "ok",
                 source: "New York Times",
@@ -46,8 +43,10 @@ var nyt = (function() {
             callback(_articles);
 
         }).fail(function() {
-            alert('NYT was not able to retrieve any articles.');            _articles = {
-                status: fail,
+            alert('NYT was not able to retrieve any articles for ' +
+                addressStreet);
+            _articles = {
+                status: "fail",
                 source: "New York Times",
                 articles: undefined
             };

@@ -236,14 +236,18 @@ var vm = (function() {
      *  after it completes the request. This function processes the data sent
      *  by the NYT api and sets the knockout variables so the ui is updated.
      *
-     * @param  {type} nytD The results from calling the NYT web service.
+     * @param  {type} nytD (NYT Data). The results from calling the NYT web service.
      * @return {type}      None
      * @comment
      * @TODO Modify code so that aged articles do not appear.
      */
     function nytArticlesFound(nytD) {
+        if (!nytD || !nytD.articles || nytD.articles.length <= 0) {
+            return;
+        }
         self.nytData = nytD;
         self.nytArticles.removeAll();
+
         for (var i = 0, item; item = nytD.articles.docs[i], i < nytD.articles.docs.length; i++) {
             self.nytArticles.push({
                 title: item.headline.main.split(";")[0],

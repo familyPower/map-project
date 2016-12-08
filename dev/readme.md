@@ -28,10 +28,19 @@ API's Used: Google Maps, New York Times, Wikipedia.
 Important: I borrowed snippets of code from various websites. I did not use
             more than on function or parts of a function from any site.
 
+*************************** New Information ****************************
 Note: If a location can't be found, the original location remains and the
   text the user entered remains in the input box, thus allowing the user to
   correct any typo.
 
+How to host the application locally.
+
+How to use Grunt:
+  Install required dependencies/packages
+  Run the build process.
+  Serve application
+
+  ************************** Improve App ***************************
 
 * TODO:
 *  1. Add scrollbars.

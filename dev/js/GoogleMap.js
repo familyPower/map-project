@@ -100,7 +100,7 @@ var gm = (function() {
      * @return {type}  None.
      */
     publicMethods.initMap = function(address) {
-        // Constructor creates a new map - only center and zoom are required.
+        //Constructor creates a new map - only center and zoom are required.
         map = new google.maps.Map(document.getElementById('map-canvas'), {
             center: new google.maps.LatLng(0, 0), //40.748817, -73.985428),
             //center: {lat: 0, lng: 0},
@@ -110,11 +110,27 @@ var gm = (function() {
             mapTypeId: 'roadmap',
             mapTypeControl: false
         });
+        if (!map) {
+            alert("Unable to initialize GoogleMap. The application will not work properly! " +
+                "Please ensure your internet connection is working.");
+        } else {
+            bounds = new google.maps.LatLngBounds();
+            if (!bounds) {
+                alert("Unable to establish bounds. Map may not function properly.")
+            }
+            largeInfowindow = new google.maps.InfoWindow();
+            if (!largeInfowindow) {
+                alert("Unable to establish Infowwindows. Location information will not be displayed.")
+            }
 
-        bounds = new google.maps.LatLngBounds();
-        largeInfowindow = new google.maps.InfoWindow();
-
-        publicMethods.updateMap(address);
+            //add listeners
+            // window resizing.Thank you
+            google.maps.event.addDomListener(window, 'resize',
+                function() {
+                    map.fitBounds(bounds);
+                });
+            publicMethods.updateMap(address);
+        }
     }
 
     /**
@@ -149,8 +165,10 @@ var gm = (function() {
      */
 
     publicMethods.updateMap = function(address) {
-        var addr = publicMethods.setAddress(address);
-        addressToLatlng(address);
+        if (address && address.trim().length > 0) {
+            var addr = publicMethods.setAddress(address);
+            addressToLatlng(address);
+        }
     }
 
     /**
@@ -174,14 +192,18 @@ var gm = (function() {
         }
 
         // Check to make sure the infowindow is not already opened on this marker.
-        if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
-            largeInfowindow.marker = marker;
-            largeInfowindow.setContent('<div>' + marker.title + '</div>');
-            largeInfowindow.open(map, marker);
-            // Make sure the marker property is cleared if the infowindow is closed.
-            largeInfowindow.addListener('closeclick', function() {
-                infoWindowClosed(theMarker);
-            });
+        if (!largeInforwindow) {
+
+        } else {
+            if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
+                largeInfowindow.marker = marker;
+                largeInfowindow.setContent('<div>' + marker.title + '</div>');
+                largeInfowindow.open(map, marker);
+                // Make sure the marker property is cleared if the infowindow is closed.
+                largeInfowindow.addListener('closeclick', function() {
+                    infoWindowClosed(theMarker);
+                });
+            }
         }
     }
 
@@ -207,7 +229,7 @@ var gm = (function() {
         var marker = mrkr ? (('Key' in mrkr) ? mrkr.Marker : mrkr) : self._selectedMarker.Marker;
         // If the marker.animation == drop, then set it to null
 
-        if (marker.getAnimation() && marker.getAnimation() ==
+        if (marker && marker.getAnimation() && marker.getAnimation() ==
             google.maps.Animation.BOUNCE) {
             marker.setAnimation(null);
         } else {
@@ -290,20 +312,21 @@ var gm = (function() {
         assert(_markers);
         var markers = _markers;
 
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i].Marker;
+        if (markers.length > 0) {
+            for (i = 0; i < markers.length; i++) {
+                var marker = markers[i].Marker;
 
-            // If is same category or category not picked
-            if (category == "all" || category.length === 0 || arrayContains(marker.category, category)) {
-                marker.setVisible(true);
-            }
-            // Categories don't match
-            else {
-                marker.setVisible(false);
+                // If is same category or category not picked
+                if (category == "all" || category.length === 0 || arrayContains(marker.category, category)) {
+                    marker.setVisible(true);
+                }
+                // Categories don't match
+                else {
+                    marker.setVisible(false);
+                }
             }
         }
     }
-
 
     /*************************** private methods ***************************/
 
@@ -405,13 +428,16 @@ var gm = (function() {
      */
     function getPlaces() {
         var service = new google.maps.places.PlacesService(map);
-
-        self._places = [];
-        service.nearbySearch({
-            location: map.center,
-            radius: 16000,
-            types: ['park', 'library', 'zoo', 'museum', 'aquarium']
-        }, processResults);
+        if (!service) {
+            alert("Unable to retrieve locations for address.");
+        } else {
+            self._places = [];
+            service.nearbySearch({
+                location: map.center,
+                radius: 16000,
+                types: ['park', 'library', 'zoo', 'museum', 'aquarium']
+            }, processResults);
+        }
     }
 
     /**
@@ -456,47 +482,50 @@ var gm = (function() {
         clearMarkers();
 
         var bounds = new google.maps.LatLngBounds();
+        if (!bounds) {
+            alert("Unable to create GoogleMap bounds.");
+        } else {
+            // The following group uses the location array to create an array of markers
+            // on initialize.
+            // console.log("places.count:", places.length);
+            for (var i = 0, place; place = self._places[i]; i++) {
+                //    console.log("i:", i);
+                var image = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
 
-        // The following group uses the location array to create an array of markers
-        // on initialize.
-        // console.log("places.count:", places.length);
-        for (var i = 0, place; place = self._places[i]; i++) {
-            //    console.log("i:", i);
-            var image = {
-                url: place.icon,
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(25, 25)
-            };
+                var marker = new google.maps.Marker({
+                    map: map,
+                    icon: image,
+                    title: place.name,
+                    position: place.geometry.location,
+                    category: place.types
+                });
 
-            var marker = new google.maps.Marker({
-                map: map,
-                icon: image,
-                title: place.name,
-                position: place.geometry.location,
-                category: place.types
-            });
+                // Create an onclick event to open an infowindow at each marker.
+                marker.addListener('click', function() {
+                    markerClicked(this); // toggle bounce
+                });
 
-            // Create an onclick event to open an infowindow at each marker.
-            marker.addListener('click', function() {
-                markerClicked(this); // toggle bounce
-            });
+                // push the marker to out array of _markers.
+                var markerkey = "key-" + i;
+                _markers.push({
+                    Key: markerkey,
+                    Marker: marker
+                });
 
-            // push the marker to out array of _markers.
-            var markerkey = "key-" + i;
-            _markers.push({
-                Key: markerkey,
-                Marker: marker
-            });
+                bounds.extend(place.geometry.location);
+            }
+            map.fitBounds(bounds);
 
-            bounds.extend(place.geometry.location);
+            // !!! Big assumption here!! There may not be any places and thus no
+            // markers to create.
+            postcondition(_markers && _markers.length > 0);
         }
-        map.fitBounds(bounds);
-
-        // !!! Big assumption here!! There may not be any places and thus no
-        // markers to create.
-        postcondition(_markers && _markers.length > 0);
     }
 
     /**
@@ -511,28 +540,31 @@ var gm = (function() {
         var geoLocStatus;
         var geoResults;
         var geocoder = new google.maps.Geocoder();
+        if (!geocoder) {
+            alert("google.maps.Geocoder failed. Application may not work correctly.");
+        } else {
 
-        // Geocode the address/area entered to get the center.
-        geocoder.geocode({
-            address: self._address
-        }, function(results, status) {
-            geoLocStatus = status;
-            geoResults = results;
-            if (status == google.maps.GeocoderStatus.OK) {
-                loc = results[0].geometry.location;
-                self.locationLatlon = results[0].geometry.location;
-                map.setCenter(results[0].geometry.location);
-                map.setZoom(15);
-                getPlaces();
-                g_callback_AddressFound(results[0].formatted_address);
-            } else {
-                // TODO: Better Error handler here; should display a message and do
-                // something reasonable, remain on current map or show world map
-                alert('Geocode was not successful for the following reason: ' + status);
-            }
-        });
+            // Geocode the address/area entered to get the center.
+            geocoder.geocode({
+                address: self._address
+            }, function(results, status) {
+                geoLocStatus = status;
+                geoResults = results;
+                if (status == google.maps.GeocoderStatus.OK) {
+                    loc = results[0].geometry.location;
+                    self.locationLatlon = results[0].geometry.location;
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(15);
+                    getPlaces();
+                    g_callback_AddressFound(results[0].formatted_address);
+                } else {
+                    // TODO: Better Error handler here; should display a message and do
+                    // something reasonable, remain on current map or show world map
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
     }
-
     /**
      * markerClicked - Sets application state based the the current state of
      *    application and the action (which marker the user clicked) of the

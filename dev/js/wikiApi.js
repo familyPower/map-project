@@ -26,15 +26,13 @@ var wiki = (function() {
      * </p>
      */
     publicMethods.getWikipediaArticles = function(addressStreet, callback) {
-        // clear out old data before new request
-        var $wikiElem = $('#wikipedia-links');
-        $wikiElem.text("");
         var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-            addressStreet + '&format=json&callback=wikiCallback';
+            addressStreet.replace(' ', '%20') + '&format=json&callback=?';
 
-        var wikiRequestTimeout = setTimeout(function() {
-            $wikiElem.text("Failed to get Wikipedia resources.");
-        }, 8000);
+        // clear out old data before new request
+        _articles = [];
+
+        //wikiUrl = wikiUrl.replace(' ', '%20');
 
         _articles = {
             status: "fail",
@@ -42,39 +40,39 @@ var wiki = (function() {
             articles: undefined
         };
 
-        $.ajax(wikiUrl, {
-            // url: wikiUrl,
-            dataType: "jsonp",
-            // jsonp: "callback",
-            success: function(response) {
-                var articleList = response[1];
-
+        $.jsonp({
+            url: wikiUrl,
+            success: function(data) {
                 _articles = {
                     status: "ok",
                     source: "Wikipedia",
-                    articles: response
+                    articles: data
                 };
                 callback(_articles);
-                // _articles = response;
-                //  for (var i = 0; i < articleList.length; i++) {
-                //    articleStr = articleList[i];
-                //    var url = 'http:/en.wikipedia.org/wiki/' + articleStr;
-                //    $wikiElem.append('<li><a href="' + url + '">' +
-                //      articleStr + '</a></li>');
-                //  };
+            },
+            error: function() {
 
-                clearTimeout(wikiRequestTimeout);
+                alert('Wikipedia was not able to retrieve any articles for ' +
+                    addressStreet);
+                _articles = {
+                    status: "fail",
+                    source: "Wikipedia",
+                    articles: undefined
+                };
+                callback(_articles);
             }
-        }).fail(function() {
-            alert('Wikipedia was not able to retrieve any articles.');
-            _articles = {
-                status: fail,
-                source: "Wikipedia",
-                articles: undefined
-            };
-            callback(_articles);
         });
-
+        // .fail(function() {
+        //
+        //     alert('Wikipedia was not able to retrieve any articles for ' +
+        //         addressStreet);
+        //     _articles = {
+        //         status: "fail",
+        //         source: "Wikipedia",
+        //         articles: undefined
+        //     };
+        //     callback(_articles);
+        // });
     }
     return publicMethods;
 })();
