@@ -78,10 +78,15 @@ var gm = (function() {
      * @return {type}  The array of markers with custome information.
      */
     publicMethods.getMarkersData = function() {
+        precondition(_markers && _markers.length > 0);
+
         var returnArray = [];
         var title;
         var key;
         for (var data, i = 0; i < _markers.length, data = _markers[i]; i++) {
+            assert('Key' in data);
+            assert(data && data.Marker);
+
             if (true == data.Marker.visible) {
                 title = data.Marker.title;
                 key = data.Key;
@@ -101,15 +106,21 @@ var gm = (function() {
      */
     publicMethods.initMap = function(address) {
         //Constructor creates a new map - only center and zoom are required.
-        map = new google.maps.Map(document.getElementById('map-canvas'), {
-            center: new google.maps.LatLng(0, 0), //40.748817, -73.985428),
-            //center: {lat: 0, lng: 0},
-            zoom: 20,
-            //minZoom: 1,
-            styles: setMapStyles(),
-            mapTypeId: 'roadmap',
-            mapTypeControl: false
-        });
+        try {
+            map = new google.maps.Map(document.getElementById('map-canvas'), {
+                center: new google.maps.LatLng(0, 0), //40.748817, -73.985428),
+                //center: {lat: 0, lng: 0},
+                zoom: 20,
+                //minZoom: 1,
+                styles: setMapStyles(),
+                mapTypeId: 'roadmap',
+                mapTypeControl: false
+            });
+        } catch (err) {
+            alert("Unable to initialize GoogleMap. The application will not work properly! " +
+                "Please ensure your internet connection is working.");
+        }
+
         if (!map) {
             alert("Unable to initialize GoogleMap. The application will not work properly! " +
                 "Please ensure your internet connection is working.");
@@ -125,10 +136,14 @@ var gm = (function() {
 
             //add listeners
             // window resizing.Thank you
-            google.maps.event.addDomListener(window, 'resize',
-                function() {
-                    map.fitBounds(bounds);
-                });
+            try {
+                google.maps.event.addDomListener(window, 'resize',
+                    function() {
+                        map.fitBounds(bounds);
+                    });
+            } catch (err) {
+                alert("Unable to add listener to map.")
+            }
             publicMethods.updateMap(address);
         }
     }
@@ -192,8 +207,9 @@ var gm = (function() {
         }
 
         // Check to make sure the infowindow is not already opened on this marker.
-        if (!largeInforwindow) {
-
+        if (!largeInfowindow) {
+            // error
+            alert("Unable to initialize InfoWindow.");
         } else {
             if (largeInfowindow.marker == null || largeInfowindow.marker != marker) {
                 largeInfowindow.marker = marker;
@@ -427,7 +443,11 @@ var gm = (function() {
      * @return {type}  None.
      */
     function getPlaces() {
-        var service = new google.maps.places.PlacesService(map);
+        try {
+            var service = new google.maps.places.PlacesService(map);
+        } catch (err) {
+            alert("Unable to retrieve locations for address.");
+        }
         if (!service) {
             alert("Unable to retrieve locations for address.");
         } else {
@@ -480,8 +500,11 @@ var gm = (function() {
         precondition(self._places && self._places.length > 0);
 
         clearMarkers();
-
-        var bounds = new google.maps.LatLngBounds();
+        try {
+            var bounds = new google.maps.LatLngBounds();
+        } catch (err) {
+            alert("Unable to create GoogleMap bounds.");
+        }
         if (!bounds) {
             alert("Unable to create GoogleMap bounds.");
         } else {
@@ -497,20 +520,27 @@ var gm = (function() {
                     anchor: new google.maps.Point(17, 34),
                     scaledSize: new google.maps.Size(25, 25)
                 };
-
-                var marker = new google.maps.Marker({
-                    map: map,
-                    icon: image,
-                    title: place.name,
-                    position: place.geometry.location,
-                    category: place.types
-                });
-
+                try {
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        icon: image,
+                        title: place.name,
+                        position: place.geometry.location,
+                        category: place.types
+                    });
+                } catch (err) {
+                    alert("Unable to create marker.");
+                }
                 // Create an onclick event to open an infowindow at each marker.
-                marker.addListener('click', function() {
-                    markerClicked(this); // toggle bounce
-                });
-
+                if (marker) {
+                    try {
+                        marker.addListener('click', function() {
+                            markerClicked(this); // toggle bounce
+                        });
+                    } catch (err) {
+                        alert("Unable to add listener to marker")
+                    }
+                }
                 // push the marker to out array of _markers.
                 var markerkey = "key-" + i;
                 _markers.push({
@@ -539,32 +569,40 @@ var gm = (function() {
         var loc;
         var geoLocStatus;
         var geoResults;
-        var geocoder = new google.maps.Geocoder();
+        try {
+            var geocoder = new google.maps.Geocoder();
+        } catch (err) {
+            alert("google.maps.Geocoder failed. Application may not work correctly.");
+        }
         if (!geocoder) {
             alert("google.maps.Geocoder failed. Application may not work correctly.");
         } else {
-
-            // Geocode the address/area entered to get the center.
-            geocoder.geocode({
-                address: self._address
-            }, function(results, status) {
-                geoLocStatus = status;
-                geoResults = results;
-                if (status == google.maps.GeocoderStatus.OK) {
-                    loc = results[0].geometry.location;
-                    self.locationLatlon = results[0].geometry.location;
-                    map.setCenter(results[0].geometry.location);
-                    map.setZoom(15);
-                    getPlaces();
-                    g_callback_AddressFound(results[0].formatted_address);
-                } else {
-                    // TODO: Better Error handler here; should display a message and do
-                    // something reasonable, remain on current map or show world map
-                    alert('Geocode was not successful for the following reason: ' + status);
-                }
-            });
+            try {
+                // Geocode the address/area entered to get the center.
+                geocoder.geocode({
+                    address: self._address
+                }, function(results, status) {
+                    geoLocStatus = status;
+                    geoResults = results;
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        loc = results[0].geometry.location;
+                        self.locationLatlon = results[0].geometry.location;
+                        map.setCenter(results[0].geometry.location);
+                        map.setZoom(15);
+                        getPlaces();
+                        g_callback_AddressFound(results[0].formatted_address);
+                    } else {
+                        // TODO: Better Error handler here; should display a message and do
+                        // something reasonable, remain on current map or show world map
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            } catch (err) {
+                alert("Google Maps geocoder failed.");
+            }
         }
     }
+
     /**
      * markerClicked - Sets application state based the the current state of
      *    application and the action (which marker the user clicked) of the

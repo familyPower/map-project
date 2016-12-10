@@ -56,32 +56,19 @@ module.exports = function(grunt) {
                 cwd: 'dist',
                 src: ['*.html', 'css/*.css', 'js/*.js'],
                 dest: 'dist'
-                    //     }
             }
         }
     });
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-replace');
-    // grunt.loadNpmTasks('grunt-string-replace');
     grunt.loadNpmTasks('grunt-contrib-compress');
 
-    grunt.registerTask('default', ['uglify', 'cssmin', 'htmlmin', 'compress']);
-    // grunt.registerTask('default', ['uglify', 'cssmin', 'htmlmin', 'replace']);
+    grunt.registerTask('default', ['uglify', 'cssmin', 'htmlmin']);
 
     /*
-    npm install grunt-contrib-clean --save-dev
-    npm install grunt-contrib-copy --save-dev
-    npm install grunt-replace --save-dev
-    npm install grunt-contrib-uglify --save-dev
-    npm install grunt-contrib-imagemin --save-dev
-    npm install grunt-contrib-cssmin --save-dev
-    npm install grunt-contrib-htmlmin --save-dev
-    npm install grunt-contrib-compress --save-dev
-    npm install grunt-string-replace --save-dev
-    */
+    npm install grunt - contrib - uglify--save - dev
+    npm install grunt - contrib - cssmin--save - dev
+    npm install grunt - contrib - htmlmin--save - dev
+    npm install grunt - contrib - compress--save - dev    */
 };

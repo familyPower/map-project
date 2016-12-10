@@ -24,7 +24,7 @@ To see a different location:
 To see a POI:
 1. Click on marker for the POI or the name (located to the left of the map).
 
-To stop a POI marker from bouncing and to close the inforwindow, do one of the
+To stop a POI marker from bouncing and to close the infowindow, do one of the
 following:
 - Click on the same link clicked on to open the Infowindow
 or
