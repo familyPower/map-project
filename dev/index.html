@@ -93,7 +93,7 @@
         <div data-bind="ifnot: noWikipediaPlaceData">
           <ul data-bind="foreach: wikipediaPlaceInfoArray" id="wiki-place-article-list">
             <li>
-              <a data-bind="attr: { href: wikiWeb_url}">
+              <a data-bind="attr: { href: wikiWeb_url}" target="new">
                 <span data-bind="text: wikiPlaceTitle"> </span>
               </a>
             </li>
