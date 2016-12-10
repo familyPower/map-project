@@ -1,0 +1,2 @@
+/*! project-6 10-12-2016 */
+var wiki=function(){var a,b={};return b.getWikipediaArticles=function(b,c){var d="http://en.wikipedia.org/w/api.php?action=opensearch&search="+b.replace(" ","%20")+"&format=json&callback=?";a=[],a={status:"fail",source:"wikipedia",articles:void 0},$.jsonp({url:d,success:function(b){a={status:"ok",source:"Wikipedia",articles:b},c(a)},error:function(){alert("Wikipedia was not able to retrieve any articles for "+b),a={status:"fail",source:"Wikipedia",articles:void 0},c(a)}})},b}();

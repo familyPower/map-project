@@ -1,0 +1,2 @@
+/*! project-6 10-12-2016 */
+var nyt=function(){var a=[],b={};return b.getNYTArticles=function(b,c){var d="http://api.nytimes.com/svc/search/v2/articlesearch.json?q="+b+"@sort=newest&api-key=fb149abdcc464fffa45ab3afef02a436";a=[],d=d.replace(" ","+"),$.getJSON(d,function(b){a={status:"ok",source:"New York Times",articles:b.response},c(a)}).fail(function(){alert("NYT was not able to retrieve any articles for "+b),a={status:"fail",source:"New York Times",articles:void 0},c(a)})},b}();
