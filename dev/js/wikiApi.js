@@ -62,17 +62,6 @@ var wiki = (function() {
                 callback(_articles);
             }
         });
-        // .fail(function() {
-        //
-        //     alert('Wikipedia was not able to retrieve any articles for ' +
-        //         addressStreet);
-        //     _articles = {
-        //         status: "fail",
-        //         source: "Wikipedia",
-        //         articles: undefined
-        //     };
-        //     callback(_articles);
-        // });
     }
     return publicMethods;
 })();
