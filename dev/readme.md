@@ -14,6 +14,17 @@ The new links may be clicked to display additional information.
 
 Step by step instructions to run the application (assuming application is run locally)
 ================================================
+0. Ensure you have the following required programs to run the application locally:
+  a) web browser ( Google Chrome for example )
+  b) web server (Python for example)
+  If either of these applications is missing, please search for your preferred
+  web server and/or browser, then
+  follow the instructions to download and install.
+
+To start the application:
+1. Start the web server, (in Python, type - Python -m SimpleHTTPServer 8000)
+2. Stat your favorite web browser
+
 1. Type localhost: 8000/dev
 The application is now running.
 
