@@ -1,4 +1,4 @@
-How to use the program
+# How to use the program
 ===============
 The application will start with the map center at the Empire State Building in
 New York City. There will be points of interest (POI) to the left of the map.
@@ -12,45 +12,44 @@ The address of the center of the map will display directly above the map.
 
 The new links may be clicked to display additional information.
 
-Step by step instructions to run the application (assuming application is run locally)
-================================================
+# Step by step instructions to run the application locally
 0. Ensure you have the following required programs to run the application locally:
-  a) web browser ( Google Chrome for example )
-  b) web server (Python for example)
+  * web browser ( Google Chrome for example )
+  * web server (Python for example)
   If either of these applications is missing, please search for your preferred
   web server and/or browser, then
   follow the instructions to download and install.
 
-To start the application:
+# To start the application:
 1. Start the web server, (in Python, type - Python -m SimpleHTTPServer 8000)
 2. Stat your favorite web browser
 
 1. Type localhost: 8000/dev
-The application is now running.
+* The application is now running.
 
-To see a different location:
+## To see a different location:
 1. Type the address or name of the landmark in the entry area.
 2. Press enter or click on the "Search" button.
 
-To see a POI:
+## To see a POI:
 1. Click on marker for the POI or the name (located to the left of the map).
 
-To stop a POI marker from bouncing and to close the infowindow, do one of the
+## To stop a POI marker from bouncing and to close the infowindow, do one of the
 following:
-- Click on the same link clicked on to open the Infowindow
+* Click on the same link clicked on to open the Infowindow
 or
-- click on the bouncing marker
+* click on the bouncing marker
 or
-- Click on the 'X' in the infowindow.
+* Click on the 'X' in the infowindow.
 
-To get detailed information about the POI
-- Click on the name of the POI
+## To get detailed information about the POI
+* Click on the name of the POI
 or
-- Click on the marker for the POI.
+* Click on the marker for the POI.
 
 
-Project Capabilities:
-=====================
+# Project Capabilities:
+
 This is a map project that allows users to type in an address, landmark or
 a location (i.e. Egypt, Pyramids; Eiffel Tower; Tower of London;
 3 Haven Plaza New York, 10009). Google Maps will search for the location. The
@@ -125,20 +124,20 @@ version of the code.
 
   ************************** Improve App ***************************
 
-* TODO:
-*  1. Add scrollbars.
-*  1. Add more information to Infowindow.
-*  2. Add more categories; consider a drop down check boxes of categories.
-*  3. Allow user to select more than one category
-*  4. Improve presentation on small devices, especially phones (read more about
+# TODO:
+1. Add scrollbars.
+2. Add more information to Infowindow.
+3. Add more categories; consider a drop down check boxes of categories.
+4. Allow user to select more than one category
+5. Improve presentation on small devices, especially phones (read more about
           bootstrap's responsive features).
-*  5. Remove blank items returned from Wikipedia (I'm assuming the blank items
+6. Remove blank items returned from Wikipedia (I'm assuming the blank items
         are retrieved from Wikipedia).
-*  6. Limit number of items in each list. Use scrollbars (see #1).
-*  7. Modify/add css to beautify/professionalize the ui.
-*  8. Make error handling more robust and informative.
+7. Limit number of items in each list. Use scrollbars (see #1).
+8. Modify/add css to beautify/professionalize the ui.
+9. Make error handling more robust and informative.
 
-Known Issues:
+# Known Issues:
   1. When user selects a POI and then clicks on a filter, the Infowindow doesn't
       close. Infowindow should close.
   2. When user types in a new location, with the place details pane open, the
