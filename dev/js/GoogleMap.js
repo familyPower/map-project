@@ -117,6 +117,7 @@ var gm = (function() {
                 mapTypeControl: false
             });
         } catch (err) {
+            //throw (err);
             alert("Unable to initialize GoogleMap. The application will not work properly! " +
                 "Please ensure your internet connection is working.");
         }

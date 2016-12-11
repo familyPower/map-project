@@ -160,11 +160,14 @@
 
   <!-- Run Google maps asyncronously - This presents some interesting and
   challenging problems. -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&libraries=places">
+  <script async defer onerror="googleMapError(Error)" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAn16N7wqKuSpwIwQrlXVfW2XVHwKc8QTc&v=3&libraries=places">
     //&callback=vm.initMap">
   </script>
 
+  <script>
+  </script>
+
   <noscript>
-    Sorry...JavaScript is needed to use this applicatioin.
+    Sorry...JavaScript is needed to use this application.
   </noscript>
 </body>

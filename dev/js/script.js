@@ -6,6 +6,7 @@
  * Notes:
  */
 
+var gm_Error = false;
 
 /**
  * window.onload handles initialization required once the window is loaded.
@@ -21,8 +22,9 @@ window.onload = function() {
 
     // ko.applyBindings(vm);
     // vm.mapLocation("Giraffe");
-    vm.initialize();
-
+    if (false == gm_Error) {
+        vm.initialize();
+    }
     // vm.initMap();
 
 }
@@ -61,4 +63,17 @@ var placeClicked = function(ele) {
  */
 function filterChanged(value) {
     vm.filterChanged(value);
+}
+
+function googleMapError(err) {
+    gm_Error = true;
+    alert("Error in: Google Map. Error code: " + err);
+}
+
+function gm_authFailure() {
+    gm_Error = true;
+
+    $('#map-canvas').remove();
+
+    alert("Failed to authenticate GoogleMaps API.");
 }
